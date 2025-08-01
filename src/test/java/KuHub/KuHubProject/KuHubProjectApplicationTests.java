@@ -1,0 +1,13 @@
+package KuHub.KuHubProject;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class KuHubProjectApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
