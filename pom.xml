@@ -15,7 +15,7 @@
 	<name>KuHubProject</name>
 	<description>SuperClass</description>
 	<modules>                            <!--ADD PORTS HERE -->
-
+		<module>msvc-producto</module> <!-- port= 8081 -->
 	</modules>
 	<properties>
 		<java.version>21</java.version>
