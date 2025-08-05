@@ -8,9 +8,9 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<groupId>Producto</groupId>
-	<artifactId>msvc-producto</artifactId>
+	<artifactId>msvc-Producto</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>msvc-producto</name>
+	<name>msvc-Producto</name>
 	<description>SubClass</description>
 	<licenses>
 		<license/>

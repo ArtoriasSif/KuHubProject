@@ -21,8 +21,9 @@
 	<url>https://github.com/tuusuario/kuhub</url>
 
 	<modules>
-		<module>msvc-producto</module> <!-- puerto 8081 -->
-		<!-- <module>msvc-inventario</module> -->
+		<module>msvc-Producto</module> 					<!-- puerto 8081 -->
+		<module>msvc-DetalleProductoSolicitud</module> 	<!-- puerto 8082 -->
+
 	</modules>
 
 	<properties>

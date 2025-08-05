@@ -1,4 +1,4 @@
-package msvc_DetalleProductoSolicitud.detalleProdutoProf;
+package msvc_DetalleProductoSolicitud.DetalleProducto;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
