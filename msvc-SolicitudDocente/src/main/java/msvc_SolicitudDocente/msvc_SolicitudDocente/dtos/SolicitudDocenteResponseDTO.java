@@ -32,7 +32,7 @@ public class SolicitudDocenteResponseDTO {
 
     private String descripcionSemana;
 
-    private String session;
+    private String sesion;
 
     private String nombreAsignatura;
 

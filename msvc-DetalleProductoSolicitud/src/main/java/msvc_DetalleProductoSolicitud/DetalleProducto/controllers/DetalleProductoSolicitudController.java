@@ -29,7 +29,7 @@ public class DetalleProductoSolicitudController {
     public ResponseEntity<List<DetalleProductoSolicitud>> findAllDetalleProductoSolicitud(){
         return ResponseEntity
                 .status(200)
-                .body(detalleProductoSolicitudService.findAllDetalleProductoSolicitud());
+                .body(detalleProductoSolicitudService.findAll());
     }
 
     @PostMapping

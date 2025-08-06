@@ -6,6 +6,7 @@ import msvc_SolicitudDocente.msvc_SolicitudDocente.dtos.DetalleProductoSolicitud
 import msvc_SolicitudDocente.msvc_SolicitudDocente.dtos.SolicitudDocenteResponseDTO;
 import msvc_SolicitudDocente.msvc_SolicitudDocente.exceptions.SolicitudDocenteException;
 import msvc_SolicitudDocente.msvc_SolicitudDocente.models.DetalleProductoSolicitud;
+import msvc_SolicitudDocente.msvc_SolicitudDocente.models.Producto;
 import msvc_SolicitudDocente.msvc_SolicitudDocente.models.entity.SolicitudDocente;
 import msvc_SolicitudDocente.msvc_SolicitudDocente.repositories.SolicitudDocenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class SolicitudDocenteServiceImp implements SolicitudDocenteService{
         //lista vacia donde se agregaran las solicitudes con detalles
         List<SolicitudDocenteResponseDTO> SolicitudesConDetalles = new ArrayList<>();
 
-        Map<Long, String> cacheProductos = new HashMap<>();
+        Map<Long, Producto> cacheProductos = new HashMap<>();
         for (SolicitudDocente S : TodasSolicitudes) {
             List<DetalleProductoSolicitud> detalles = detallesPorSolicitud.getOrDefault(S.getIdSolicitudDocente(), new ArrayList<>());
             //Lista vacia de Detalles producto solicitado DTO
@@ -62,15 +63,16 @@ public class SolicitudDocenteServiceImp implements SolicitudDocenteService{
 
             for (DetalleProductoSolicitud D : detalles) {
                 Long idProducto = D.getIdProducto();
-                String nombreProducto = cacheProductos.computeIfAbsent(idProducto, id ->
-                                productoClientRest.findProductoById(id).getNombreProducto()
+                Producto P = cacheProductos.computeIfAbsent(idProducto, id ->
+                        productoClientRest.findProductoById(id)
                 );//esto sirve para guardar en cache los productos, para diminuir costo en llamadas clients repetitivas
 
                 DetalleProductoSolicitudResponseDTO dto = new DetalleProductoSolicitudResponseDTO(
                     D.getIdDetalleProductoSolicitud(),
                     D.getIdSolicitudDocente(),
                     D.getIdProducto(),
-                    nombreProducto,
+                    P.getNombreProducto(),
+                    P.getUnidadMedida(),
                     D.getCantidadUnidadMedida()
                     );
                 detallesProductoSolicitud.add(dto);
@@ -82,7 +84,7 @@ public class SolicitudDocenteServiceImp implements SolicitudDocenteService{
                     S.getNumeroTaller(),
                     S.getCantidadPersonas(),
                     S.getDescripcionSemana(),
-                    S.getSession(),
+                    S.getSesion(),
                     S.getNombreAsignatura(),
                     S.getFechaProgramada(),
                     detallesProductoSolicitud );

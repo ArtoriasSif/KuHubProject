@@ -41,7 +41,7 @@ public class SolicitudDocente {
 
     @Column(nullable = false )
     @NotBlank(message = "El campo session no puede ser vacio")
-    private String session;
+    private String sesion;
 
     @Column(name="nombre_asignatura",nullable = false )
     @NotBlank(message = "El campo nombre asignatura semana no puede ser vacio")

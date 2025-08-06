@@ -7,5 +7,5 @@ import java.util.List;
 public interface DetalleProductoSolicitudService {
     DetalleProductoSolicitud saveDetalleProductoSolicitud(DetalleProductoSolicitud detalleProductoSolicitud);
     DetalleProductoSolicitud findById(Long id);
-    List<DetalleProductoSolicitud> findAllDetalleProductoSolicitud();
+    List<DetalleProductoSolicitud> findAll();
 }

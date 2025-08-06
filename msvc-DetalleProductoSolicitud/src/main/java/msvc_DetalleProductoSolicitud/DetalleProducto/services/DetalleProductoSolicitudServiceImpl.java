@@ -31,7 +31,7 @@ public class DetalleProductoSolicitudServiceImpl implements DetalleProductoSolic
 
     @Transactional
     @Override
-    public List<DetalleProductoSolicitud> findAllDetalleProductoSolicitud() {
+    public List<DetalleProductoSolicitud> findAll() {
         return detalleProductoSolicitudRepository.findAll();
     }
 
