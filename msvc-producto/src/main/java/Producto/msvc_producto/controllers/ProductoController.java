@@ -26,6 +26,13 @@ public class ProductoController {
                 .body(productoService.findAll());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Producto> findProductoById(@PathVariable Long id){
+        return ResponseEntity
+                .status(200)
+                .body(productoService.findById(id));
+    }
+
     @PostMapping
     public ResponseEntity<Producto> createProducto(@Validated @RequestBody Producto producto){
         return ResponseEntity

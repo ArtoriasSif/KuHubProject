@@ -31,6 +31,15 @@ public class ProductoServiceImp implements ProductoService{
         );
     }
 
+    @Transactional
+    @Override
+    public Producto findById(Long id){
+        return productoRepository.findById(id).orElseThrow(
+                ()-> new ProductoException("Producto con el id "+id+" no encontrado")
+        );
+
+    }
+
 
     @Transactional
     @Override

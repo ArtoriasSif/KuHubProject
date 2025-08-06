@@ -1,4 +1,4 @@
-package msvc_DetalleProductoSolicitud.DetalleProducto.models;
+package msvc_DetalleProductoSolicitud.DetalleProducto.models.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

@@ -1,7 +1,11 @@
 package msvc_DetalleProductoSolicitud.DetalleProducto.services;
 
-import msvc_DetalleProductoSolicitud.DetalleProducto.models.DetalleProductoSolicitud;
+import msvc_DetalleProductoSolicitud.DetalleProducto.models.entity.DetalleProductoSolicitud;
+
+import java.util.List;
 
 public interface DetalleProductoSolicitudService {
-    DetalleProductoSolicitud save(DetalleProductoSolicitud detalleProductoSolicitud);
+    DetalleProductoSolicitud saveDetalleProductoSolicitud(DetalleProductoSolicitud detalleProductoSolicitud);
+    DetalleProductoSolicitud findById(Long id);
+    List<DetalleProductoSolicitud> findAllDetalleProductoSolicitud();
 }
