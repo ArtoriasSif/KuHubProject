@@ -20,7 +20,7 @@ import java.util.*;
         private ProductoRepository productoRepository;
 
         private String generarUnidadAleatoria() {
-            List<String> unidades = Arrays.asList("kilo", "litro", "unidad");
+            List<String> unidades = Arrays.asList("Kilo", "Litro", "Unidad");
             return unidades.get(new Random().nextInt(unidades.size()));
         }
 
