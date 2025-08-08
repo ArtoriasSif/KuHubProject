@@ -40,4 +40,16 @@ public class DetalleProductoSolicitudController {
                 .body(detalleProductoSolicitudService.saveDetalleProductoSolicitud(detalleProductoSolicitud));
     }
 
+    //Metodo accedido por Client para verificar si existe producto vinculado al detalle
+    @GetMapping("/existeProducto/{nombreProducto}")
+    public Boolean existeProductoEnDetalle(@PathVariable String nombreProducto){
+        return detalleProductoSolicitudService.existeProductoEnDetalle(nombreProducto);
+    }
+
+    @GetMapping("/existeProductoId/{idProducto}")
+    public Boolean existeProductoIdEnDetalle(@PathVariable Long idProducto){
+        return detalleProductoSolicitudService.existeProductoIdEnDetalle(idProducto);
+    }
+
+
 }

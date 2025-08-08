@@ -7,6 +7,7 @@ import msvc_DetalleProductoSolicitud.DetalleProducto.models.Producto;
 import msvc_DetalleProductoSolicitud.DetalleProducto.models.entity.DetalleProductoSolicitud;
 import msvc_DetalleProductoSolicitud.DetalleProducto.repositories.DetalleProductoSolicitudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +53,26 @@ public class DetalleProductoSolicitudServiceImpl implements DetalleProductoSolic
         }
 
         return detalleProductoSolicitudRepository.save(detalleProductoSolicitud);
+    }
+
+    //Metodo accedido por Client para verificar si existe producto vinculado al detalle
+    @Transactional(readOnly = true)
+    @Override
+    public boolean existeProductoEnDetalle(String nombreProducto) {
+        ResponseEntity<Producto> response = productoClientRest.findProductoByName(nombreProducto);
+
+        if (response == null || !response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            return false; // No se encontró el producto o hubo error
+        }
+
+        Producto producto = response.getBody();
+        return detalleProductoSolicitudRepository.existsByIdProducto(producto.getIdProducto());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public boolean existeProductoIdEnDetalle(Long idProducto) {
+        return detalleProductoSolicitudRepository.existsByIdProducto(idProducto);
     }
 
 }

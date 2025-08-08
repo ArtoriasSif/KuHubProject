@@ -8,4 +8,6 @@ public interface DetalleProductoSolicitudService {
     DetalleProductoSolicitud saveDetalleProductoSolicitud(DetalleProductoSolicitud detalleProductoSolicitud);
     DetalleProductoSolicitud findById(Long id);
     List<DetalleProductoSolicitud> findAll();
+    boolean existeProductoEnDetalle (String nombreProducto);
+    boolean existeProductoIdEnDetalle (Long idProducto);
 }

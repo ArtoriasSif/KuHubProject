@@ -1,6 +1,6 @@
 package Producto.msvc_producto.init;
 
-import Producto.msvc_producto.models.Producto;
+import Producto.msvc_producto.models.entity.Producto;
 import Producto.msvc_producto.repositories.ProductoRepository;
 import net.datafaker.Faker;
 import org.slf4j.Logger;

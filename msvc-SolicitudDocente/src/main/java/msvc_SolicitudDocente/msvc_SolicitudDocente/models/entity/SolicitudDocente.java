@@ -47,8 +47,7 @@ public class SolicitudDocente {
     @NotBlank(message = "El campo nombre asignatura semana no puede ser vacio")
     private String nombreAsignatura;
 
-    @Column(name = "fecha_programada", nullable = false)
-    @NotNull(message = "La fecha programada no puede ser nula")
+    @Column(name = "fecha_programada" ) 
     private Date fechaProgramada;
 
 
