@@ -1,5 +1,13 @@
 package msvc_Inventario.dtos;
 
+
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class InventarioDTO {
 
     private Long idInventario;
