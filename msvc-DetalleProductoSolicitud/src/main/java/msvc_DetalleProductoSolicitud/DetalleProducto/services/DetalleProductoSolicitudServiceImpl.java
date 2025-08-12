@@ -2,9 +2,12 @@ package msvc_DetalleProductoSolicitud.DetalleProducto.services;
 
 import feign.FeignException;
 import msvc_DetalleProductoSolicitud.DetalleProducto.clients.ProductoClientRest;
+import msvc_DetalleProductoSolicitud.DetalleProducto.clients.SolicitudDocenteClientRest;
+import msvc_DetalleProductoSolicitud.DetalleProducto.dtos.DetalleProductoSolicitudUpdateQuantityRequest;
 import msvc_DetalleProductoSolicitud.DetalleProducto.exceptions.DetalleProductoSolicitudException;
 import msvc_DetalleProductoSolicitud.DetalleProducto.models.Producto;
 import msvc_DetalleProductoSolicitud.DetalleProducto.models.entity.DetalleProductoSolicitud;
+import msvc_DetalleProductoSolicitud.DetalleProducto.models.entity.SolicitudDocente;
 import msvc_DetalleProductoSolicitud.DetalleProducto.repositories.DetalleProductoSolicitudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,9 @@ public class DetalleProductoSolicitudServiceImpl implements DetalleProductoSolic
 
     @Autowired
     private ProductoClientRest productoClientRest;
+
+    @Autowired
+    private SolicitudDocenteClientRest solicitudDocenteClientRest;
 
     @Transactional
     @Override
@@ -55,6 +61,51 @@ public class DetalleProductoSolicitudServiceImpl implements DetalleProductoSolic
         return detalleProductoSolicitudRepository.save(detalleProductoSolicitud);
     }
 
+    @Transactional
+    @Override
+    public DetalleProductoSolicitud detalleProductoSolicitudUpdateQuantity
+            (Long id, DetalleProductoSolicitudUpdateQuantityRequest quantityRequest) {
+        DetalleProductoSolicitud detalleProductoSolicitud = detalleProductoSolicitudRepository.findById(id).orElseThrow(
+                () -> new DetalleProductoSolicitudException("Detalle de producto solicitud con el id " + id + " no encontrado")
+        );
+
+        if (quantityRequest.getCantidadUnidadMedida() == null || quantityRequest.getCantidadUnidadMedida() < 0) {
+            throw new DetalleProductoSolicitudException("La cantidad debe ser un número positivo");
+        }
+
+        detalleProductoSolicitud.setCantidadUnidadMedida(quantityRequest.getCantidadUnidadMedida());
+        return detalleProductoSolicitudRepository.save(detalleProductoSolicitud);
+    }
+
+    @Transactional
+    @Override
+    public void deleteByIdDetalleP(Long id) {
+        if (!detalleProductoSolicitudRepository.existsById(id)) {
+            throw new DetalleProductoSolicitudException("Detalle de producto solicitud con el id " + id + " no encontrado");
+        }
+        detalleProductoSolicitudRepository.deleteById(id);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAllDetalleProductoSolicitud(Long idSolicitudDocente) {
+        try {
+            SolicitudDocente solicitud = solicitudDocenteClientRest
+                    .findByIdSolicitudDocente(idSolicitudDocente)
+                    .getBody();
+
+            if (solicitud != null) {
+                // Eliminar detalles de producto solicitud
+                detalleProductoSolicitudRepository.existsByIdProducto(idSolicitudDocente);
+            } else {
+                throw new RuntimeException("SolicitudDocente no encontrada con ID: " + idSolicitudDocente);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al eliminar detalles de la solicitud", e);
+        }
+    }
+
+
     //Metodo accedido por Client para verificar si existe producto vinculado al detalle
     @Transactional(readOnly = true)
     @Override
@@ -68,7 +119,6 @@ public class DetalleProductoSolicitudServiceImpl implements DetalleProductoSolic
         Producto producto = response.getBody();
         return detalleProductoSolicitudRepository.existsByIdProducto(producto.getIdProducto());
     }
-
     @Transactional(readOnly = true)
     @Override
     public boolean existeProductoIdEnDetalle(Long idProducto) {

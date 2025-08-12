@@ -97,5 +97,7 @@ public class ProductoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado: " + e.getMessage());
         }
     }
+    //Crear metodo al futuro para deletar en cascada, por gestor ADMIN
+
 
 }
