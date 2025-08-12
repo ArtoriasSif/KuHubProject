@@ -6,5 +6,5 @@ import lombok.*;
 @Getter@Setter@AllArgsConstructor@NoArgsConstructor@ToString
 public class DetalleProductoSolicitudUpdateQuantityRequest {
     @NotNull(message = "La cantidad de la unidad de medida no puede ser nula")
-    private Integer cantidadUnidadMedida;
+    private Float cantidadUnidadMedida;
 }

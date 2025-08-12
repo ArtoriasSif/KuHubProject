@@ -1,6 +1,6 @@
 package msvc_DetalleProductoSolicitud.DetalleProducto.clients;
 
-import msvc_DetalleProductoSolicitud.DetalleProducto.models.entity.SolicitudDocente;
+import msvc_DetalleProductoSolicitud.DetalleProducto.models.SolicitudDocente;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
