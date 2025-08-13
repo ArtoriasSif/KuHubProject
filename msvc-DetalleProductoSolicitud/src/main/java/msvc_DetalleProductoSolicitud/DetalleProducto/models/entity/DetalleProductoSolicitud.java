@@ -28,5 +28,5 @@ public class DetalleProductoSolicitud {
 
     @Column(name=   "cantidad_unidad_medida",nullable = false)
     @NotNull(message = "El campo id cantidad unidad medida no puede ser vacio")
-    private Integer cantidadUnidadMedida;
+    private Float cantidadUnidadMedida;
 }

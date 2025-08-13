@@ -7,7 +7,7 @@ import msvc_DetalleProductoSolicitud.DetalleProducto.dtos.DetalleProductoSolicit
 import msvc_DetalleProductoSolicitud.DetalleProducto.exceptions.DetalleProductoSolicitudException;
 import msvc_DetalleProductoSolicitud.DetalleProducto.models.Producto;
 import msvc_DetalleProductoSolicitud.DetalleProducto.models.entity.DetalleProductoSolicitud;
-import msvc_DetalleProductoSolicitud.DetalleProducto.models.entity.SolicitudDocente;
+import msvc_DetalleProductoSolicitud.DetalleProducto.models.SolicitudDocente;
 import msvc_DetalleProductoSolicitud.DetalleProducto.repositories.DetalleProductoSolicitudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,8 +1,5 @@
-package msvc_DetalleProductoSolicitud.DetalleProducto.models.entity;
+package msvc_DetalleProductoSolicitud.DetalleProducto.models;
 
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Date;
