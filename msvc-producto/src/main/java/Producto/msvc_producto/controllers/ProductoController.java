@@ -100,4 +100,11 @@ public class ProductoController {
     //Crear metodo al futuro para deletar en cascada, por gestor ADMIN
 
 
+    //Lo quiero para Checkear en el Inventario que existe el producto
+    //Ingresa el producto desde un nombre preseleccionado en el Frontend por lo que entendi
+    @GetMapping("/idByNombreProducto/{nombreProducto}")
+    public ResponseEntity<Producto> getIdByNombreProducto(@PathVariable String nombreProducto) {
+        return ResponseEntity.ok(productoService.findByNombreProducto(nombreProducto));
+    }
+
 }

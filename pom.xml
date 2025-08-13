@@ -24,7 +24,7 @@
 		<module>msvc-Producto</module> 					<!-- puerto 8081 -->
 		<module>msvc-DetalleProductoSolicitud</module> 	<!-- puerto 8082 -->
 		<module>msvc-SolicitudDocente</module> 			<!-- puerto 8083 -->
-		<module>msvc-Inventario</module>
+		<module>msvc-Inventario</module>				<!-- puerto 8085 -->
 
 	</modules>
 
