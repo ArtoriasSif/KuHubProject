@@ -1,6 +1,7 @@
 package Usuario.Msvc_Usuario.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
 @Entity
@@ -24,12 +25,13 @@ public class Usuario {
     @Column(name="segundo_nombre")
     private String segundoNombre;
 
-    @Column(name="apellido_materno")
+    @Column(name="apellido_materno",nullable = false)
     private String apellidoMaterno;
 
     @Column(name="apellido_paterno",nullable = false)
     private String apellidoPaterno;
 
+    @Email
     @Column(nullable = false,unique = true)
     private String email;
 
