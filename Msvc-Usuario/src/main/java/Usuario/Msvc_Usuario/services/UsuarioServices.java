@@ -7,6 +7,7 @@ import java.util.List;
 public interface UsuarioServices {
 
     Usuario findByIdUsuario (Long idUsuario);
+    Usuario findByUsername (String username);
     List<Usuario> findAllUsuarios ();
-    Usuario save (Usuario usuario);
+    Usuario saveUsuario (Usuario usuario);
 }

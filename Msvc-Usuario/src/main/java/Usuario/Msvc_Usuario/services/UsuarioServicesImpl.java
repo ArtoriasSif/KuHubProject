@@ -20,11 +20,17 @@ public class UsuarioServicesImpl implements UsuarioServices{
         );
     }
 
+    public Usuario findByUsername (String username){
+        return usuarioRepository.findByUsername(username).orElseThrow(
+                () -> new UsuarioException("Usuario con el nombre de usuario "+username+ "no encontrado" )
+        );
+    }
+
     public List<Usuario> findAllUsuarios (){
         return usuarioRepository.findAll();
     }
 
-    public Usuario save (Usuario usuario){
+    public Usuario saveUsuario (Usuario usuario){
 
         if (usuarioRepository.existsByEmail(usuario.getEmail()) ){
             throw new UsuarioException("Ya existe un usuario vinculado a este Email");
@@ -34,7 +40,6 @@ public class UsuarioServicesImpl implements UsuarioServices{
                     "registrado");
         }
 
-
-
+        return usuarioRepository.save(usuario);
     }
 }

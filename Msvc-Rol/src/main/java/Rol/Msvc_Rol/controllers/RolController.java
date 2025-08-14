@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//porto de la aplicacion 8086
 @RestController
 @RequestMapping("/api/v1/rol")
 @Validated
