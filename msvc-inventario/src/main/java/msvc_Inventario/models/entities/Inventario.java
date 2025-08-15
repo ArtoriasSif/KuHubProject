@@ -50,7 +50,14 @@ public class Inventario {
     @OneToMany(mappedBy = "inventario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Movimiento> movimientos;
 
+    public Inventario(Long idProducto,String ubicacionInventario, Float totalInventario, Float inicialInventario, Float devolucionInventario) {
+        this.idProducto = idProducto;
+        this.ubicacionInventario = ubicacionInventario;
+        this.totalInventario = totalInventario;
+        this.inicialInventario = inicialInventario;
+        this.devolucionInventario = devolucionInventario;
 
+    }
 
 
 }

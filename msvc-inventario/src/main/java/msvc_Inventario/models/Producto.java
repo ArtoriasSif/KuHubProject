@@ -15,4 +15,10 @@ public class Producto {
 
     private String unidadMedida;
 
+    public Producto(String nombreProducto, String unidadMedida) {
+        this.nombreProducto = nombreProducto;
+        this.unidadMedida = unidadMedida;
+
+    }
+
 }
