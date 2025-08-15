@@ -32,6 +32,14 @@ public class SolicitudDocenteServiceImp implements SolicitudDocenteService{
 
     @Transactional
     @Override
+    public SolicitudDocente findByIdSolicitudDocente(Long id) {
+        return solicitudDocenteRepository.findById(id).orElseThrow(
+                ()-> new SolicitudDocenteException("Solicitud de docente con el id "+id+" no encontrado")
+        );
+    }
+
+    @Transactional
+    @Override
     public List<SolicitudDocente> findAll() {
         return solicitudDocenteRepository.findAll();
     }

@@ -97,6 +97,8 @@ public class ProductoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado: " + e.getMessage());
         }
     }
+    //Crear metodo al futuro para deletar en cascada, por gestor ADMIN
+
 
     //Lo quiero para Checkear en el Inventario que existe el producto
     //Ingresa el producto desde un nombre preseleccionado en el Frontend por lo que entendi

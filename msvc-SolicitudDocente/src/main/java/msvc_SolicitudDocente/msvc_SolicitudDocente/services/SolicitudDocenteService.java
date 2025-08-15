@@ -9,4 +9,5 @@ public interface SolicitudDocenteService {
     SolicitudDocente saveSolicitudDocente(SolicitudDocente solicitudDocente);
     List<SolicitudDocente> findAll() ;
     List<SolicitudDocenteResponseDTO> findAllSolicitudDocentesConDetalles();
+    SolicitudDocente findByIdSolicitudDocente(Long id);
 }

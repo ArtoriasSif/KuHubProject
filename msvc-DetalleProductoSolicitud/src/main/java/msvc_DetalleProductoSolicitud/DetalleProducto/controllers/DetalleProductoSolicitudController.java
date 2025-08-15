@@ -1,8 +1,11 @@
 package msvc_DetalleProductoSolicitud.DetalleProducto.controllers;
 
+import msvc_DetalleProductoSolicitud.DetalleProducto.dtos.DetalleProductoSolicitudUpdateQuantityRequest;
+import msvc_DetalleProductoSolicitud.DetalleProducto.exceptions.DetalleProductoSolicitudException;
 import msvc_DetalleProductoSolicitud.DetalleProducto.models.entity.DetalleProductoSolicitud;
 import msvc_DetalleProductoSolicitud.DetalleProducto.services.DetalleProductoSolicitudService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -40,12 +43,51 @@ public class DetalleProductoSolicitudController {
                 .body(detalleProductoSolicitudService.saveDetalleProductoSolicitud(detalleProductoSolicitud));
     }
 
-    //Metodo accedido por Client para verificar si existe producto vinculado al detalle
+
+    @PutMapping("/cantidad/{id}")
+    public ResponseEntity<DetalleProductoSolicitud> detalleProductoSolicitudUpdateQuantity
+    (@PathVariable Long id,
+    @Validated @RequestBody DetalleProductoSolicitudUpdateQuantityRequest QuantityRequest){
+        return ResponseEntity
+                .status(200)
+                .body(detalleProductoSolicitudService.detalleProductoSolicitudUpdateQuantity(id, QuantityRequest));
+    }
+
+    //Crear deletar detalle y todos los detalles del una solicitud
+
+    @DeleteMapping("/detalle/{idDetalleProductoSolicitud}")
+    public ResponseEntity <?> deleteDetallesByIdDetalleProductoSolicitud (@PathVariable Long idDetalleProductoSolicitud){
+        try {
+            detalleProductoSolicitudService.deleteByIdDetalleP(idDetalleProductoSolicitud);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } catch (DetalleProductoSolicitudException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error inesperado: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/todosdetalles/{idSolicitudDocente}")
+    public ResponseEntity <?> deleteTodosDetallesByIdSolicitudDocente (@PathVariable Long idSolicitudDocente){
+        try {
+            detalleProductoSolicitudService.deleteAllDetalleProductoSolicitud(idSolicitudDocente);
+            return ResponseEntity.noContent().build(); // 204 No Content
+
+        } catch (DetalleProductoSolicitudException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error inesperado: " + e.getMessage());
+        }
+    }
+
+
+    //Métodos accedidos por Client para verificar si existe producto vinculado al detalle
     @GetMapping("/existeProducto/{nombreProducto}")
     public Boolean existeProductoEnDetalle(@PathVariable String nombreProducto){
         return detalleProductoSolicitudService.existeProductoEnDetalle(nombreProducto);
     }
-
     @GetMapping("/existeProductoId/{idProducto}")
     public Boolean existeProductoIdEnDetalle(@PathVariable Long idProducto){
         return detalleProductoSolicitudService.existeProductoIdEnDetalle(idProducto);

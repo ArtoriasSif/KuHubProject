@@ -25,6 +25,13 @@ public class SolicitudDocenteController {
                 .body(solicitudDocenteService.findAllSolicitudDocentesConDetalles());
     }
 
+    @GetMapping("/{idSolicitudDocente}")
+    public ResponseEntity<SolicitudDocente> findByIdSolicitudDocente(@PathVariable Long idSolicitudDocente){
+        return ResponseEntity
+                .status(200)
+                .body(solicitudDocenteService.findByIdSolicitudDocente(idSolicitudDocente));
+    }
+
     @PostMapping
     public ResponseEntity<SolicitudDocente> saveSolicitudDocente(@Validated @RequestBody SolicitudDocente solicitudDocente){
         return ResponseEntity
