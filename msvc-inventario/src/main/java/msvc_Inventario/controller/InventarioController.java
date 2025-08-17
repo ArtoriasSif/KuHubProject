@@ -22,7 +22,7 @@ public class InventarioController {
     private InventarioService inventarioService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<InventarioDTO> findById(Long id){
+    public ResponseEntity<InventarioDTO> findById(@PathVariable Long id){
         return ResponseEntity.ok().body(this.inventarioService.findById(id));
     }
 

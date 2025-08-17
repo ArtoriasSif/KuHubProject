@@ -1,7 +1,8 @@
-package msvc_Inventario.dtos;
+package msvc_Movimiento.dtos;
 
 import lombok.*;
-import msvc_Inventario.models.entities.Movimiento.TipoMovimiento;
+import msvc_Movimiento.model.entity.Movimiento;
+
 
 import java.time.LocalDate;
 
@@ -16,5 +17,5 @@ public class CrearMovimientoDTO {
     private Long idInventario;
     private LocalDate fechaMovimiento; // Formato "05-mar"
     private Float cantidadMovimiento;
-    private TipoMovimiento tipoMovimiento;
+    private Movimiento.TipoMovimiento tipoMovimiento;
 }

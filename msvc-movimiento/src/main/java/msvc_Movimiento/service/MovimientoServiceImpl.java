@@ -1,13 +1,10 @@
-package msvc_Inventario.services;
+package msvc_Movimiento.service;
 
-import jakarta.transaction.Transactional;
-import msvc_Inventario.dtos.CrearMovimientoDTO;
-import msvc_Inventario.exception.InventarioException;
-import msvc_Inventario.exception.MovimientoException;
-import msvc_Inventario.models.entities.Inventario;
-import msvc_Inventario.models.entities.Movimiento;
-import msvc_Inventario.repositories.InventarioRepository;
-import msvc_Inventario.repositories.MovimientoRepository;
+
+import msvc_Movimiento.dtos.CrearMovimientoDTO;
+import msvc_Movimiento.exception.MovimientoException;
+import msvc_Movimiento.model.entity.Movimiento;
+import msvc_Movimiento.repository.MovimientoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,23 +16,22 @@ public class MovimientoServiceImpl implements MovimientoService {
 
     @Autowired
     private MovimientoRepository movimientoRepository;
-    @Autowired
-    private InventarioRepository inventarioRepository;
+
 
 
     //La diferencia es:
     //  create() manda un INSERT, crea y guarda sin necesidad de instanciar
     //  save() manda un INSERT sino un UPDATE si ya existe el objeto, da mas flexibilidad
             //porque requiere instanciar el objeto manualmente, lo que te permite setear atributos uno a uno
+
+    /*
     @Override
     @Transactional
-    public CrearMovimientoDTO createMovimiento(CrearMovimientoDTO movimientodto) {
+    public CrearMovimientoDTO save(CrearMovimientoDTO movimientodto) {
 
-        Inventario inventario = this.inventarioRepository.findByIdInventario(movimientodto.getIdInventario());
-        if (inventario == null) {
-            throw new InventarioException("No existe el inventario");
-        }
+        Inventario inventario = this.inventarioRepository.findById(movimientodto.getIdInventario()).orElseThrow(() -> new InventarioException("No existe el Inventario"));
         Movimiento movimiento = new Movimiento();
+
         movimiento.setInventario(inventario);
         movimiento.setTipoMovimiento(movimientodto.getTipoMovimiento());
         movimiento.setCantidadMovimiento(movimientodto.getCantidadMovimiento());
@@ -48,6 +44,7 @@ public class MovimientoServiceImpl implements MovimientoService {
         return cambiarDeMovimientoADTO(procesoDeGuardadoReal);
 
     }
+    */
 
     @Override
     public List<CrearMovimientoDTO> getMovimientosByInventario(Long idInventario) {
@@ -73,7 +70,10 @@ public class MovimientoServiceImpl implements MovimientoService {
     //METODO CUSTOM PARA TRABAJAR CON OBJETOS DEL MODEL Y PASARLOS A DTO
     private CrearMovimientoDTO cambiarDeMovimientoADTO(Movimiento movimiento) {
         CrearMovimientoDTO dto = new CrearMovimientoDTO();
-        dto.setIdMovimiento(movimiento.getIdMovimiento());
+
+        Long id = movimiento.getIdMovimiento();
+
+        dto.setIdMovimiento(id);
         dto.setIdInventario(movimiento.getInventario().getIdInventario());
         dto.setFechaMovimiento(movimiento.getFechaMovimiento());
         dto.setCantidadMovimiento(movimiento.getCantidadMovimiento());

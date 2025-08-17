@@ -47,8 +47,6 @@ public class Inventario {
     @Min(value=0, message = "La devolucion no puede ser negativa")
     private Float devolucionInventario;
 
-    @OneToMany(mappedBy = "inventario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Movimiento> movimientos;
 
     public Inventario(Long idProducto,String ubicacionInventario, Float totalInventario, Float inicialInventario, Float devolucionInventario) {
         this.idProducto = idProducto;

@@ -1,8 +1,9 @@
-package msvc_Inventario.controller;
+package msvc_Movimiento.controller;
 
 import jakarta.validation.Valid;
-import msvc_Inventario.dtos.CrearMovimientoDTO;
-import msvc_Inventario.services.MovimientoService;
+
+import msvc_Movimiento.dtos.CrearMovimientoDTO;
+import msvc_Movimiento.service.MovimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class MovimientoController {
 
     @PostMapping
     public ResponseEntity<CrearMovimientoDTO> createMovimiento(@Valid @RequestBody CrearMovimientoDTO movimientoDTO) {
-        CrearMovimientoDTO movimientoACrear = this.movimientoService.createMovimiento(movimientoDTO);
+        CrearMovimientoDTO movimientoACrear = this.movimientoService.save(movimientoDTO);
         return new ResponseEntity<>(movimientoACrear, HttpStatus.CREATED);
     }
 

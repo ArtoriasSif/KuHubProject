@@ -26,7 +26,8 @@
 		<module>msvc-SolicitudDocente</module> 			<!-- puerto 8083 -->
 		<module>msvc-Usuario</module> 					<!-- puerto 8084 -->
 		<module>msvc-Inventario</module>				<!-- puerto 8085 -->
-		<module>msvc-Rol</module> 						<!-- puerto 8086 -->
+		<module>msvc-Rol</module>
+		<module>msvc-movimiento</module><!-- puerto 8086 -->
 
 	</modules>
 

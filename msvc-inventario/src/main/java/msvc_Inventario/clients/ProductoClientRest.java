@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "msvc-Producto", url = "http://localhost:8081/api/v1/producto")
 public interface ProductoClientRest {
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     Producto findProductoById(@PathVariable Long id);
 
     @GetMapping("/idByNombreProducto/{nombreProducto}")

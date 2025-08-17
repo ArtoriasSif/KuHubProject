@@ -1,7 +1,8 @@
-package msvc_Inventario.repositories;
+package msvc_Movimiento.repository;
 
-import msvc_Inventario.models.entities.Inventario;
-import msvc_Inventario.models.entities.Movimiento;
+
+import msvc_Movimiento.model.Inventario;
+import msvc_Movimiento.model.entity.Movimiento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -18,12 +18,5 @@ public class InventarioDTO {
     private Float inicialInventario;
     private Float devolucionInventario;
 
-    public InventarioDTO(String nombreProducto, String unidadMedida, String ubicacionInventario, Float totalInventario, Float inicialInventario, Float devolucionInventario) {
-        this.nombreProducto = nombreProducto;
-        this.unidadMedida = unidadMedida;
-        this.ubicacionInventario = ubicacionInventario;
-        this.totalInventario = totalInventario;
-        this.inicialInventario = inicialInventario;
-        this.devolucionInventario = devolucionInventario;
-    }
+
 }

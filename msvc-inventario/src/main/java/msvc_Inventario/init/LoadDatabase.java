@@ -5,7 +5,7 @@ import msvc_Inventario.clients.ProductoClientRest;
 import msvc_Inventario.models.Producto;
 import msvc_Inventario.models.entities.Inventario;
 import msvc_Inventario.repositories.InventarioRepository;
-import msvc_Inventario.repositories.MovimientoRepository;
+
 import net.datafaker.Faker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,39 +23,32 @@ public class LoadDatabase implements CommandLineRunner {
     @Autowired
     InventarioRepository inventarioRepository;
 
-    @Autowired
-    MovimientoRepository movimientoRepository;
+
 
     @Autowired
     ProductoClientRest productoClientRest;
 
     @Override
     public void run(String... args) throws Exception {
-        /*Recordar que se debe activar el Faker en el POM */
-
-        Faker faker = new Faker(Locale.of("es","CL"));
 
         if(inventarioRepository.count() == 0) {
             for (int i = 0; i < 100; i++) {
-                Inventario inventario = new Inventario();
+
                 Long idPrueba = (long) i + 1;
 
-                Producto producto = productoClientRest.findProductoById(idPrueba);
+                Producto producto = this.productoClientRest.findProductoById(idPrueba);
                 assert producto !=null;
 
-                Float total = 10f;
-
-                inventario.setIdProducto(producto.getIdProducto());
-                inventario.setDevolucionInventario(0f);
-                inventario.setInicialInventario(0f);
-                inventario.setTotalInventario(total);
-                inventario.setUbicacionInventario("E5");
+                Inventario inventario = new Inventario(
+                        producto.getIdProducto(),  // Long idProducto
+                        "E5",                     // String ubicacionInventario
+                        10f,                      // Float totalInventario
+                        0f,                       // Float inicialInventario
+                        0f                        // Float devolucionInventario
+                );
                 inventarioRepository.save(inventario);
 
                 log.info("El inventario creado es {}", inventario);
-
-
-
 
             }
 
