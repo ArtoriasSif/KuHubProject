@@ -10,6 +10,10 @@ public interface InventarioService {
     InventarioDTO findById(Long id);
     List<InventarioDTO> findAll();
     Inventario getInventarioByIdProducto(Long idProducto);
+    void deleteById(Long id);
+    InventarioDTO update(Long id,InventarioDTO dto);
+    void updateTotalInventario(Long id, float adjustmentAmount);
+
 
     //FALTA UPDATE Y DELETE
 

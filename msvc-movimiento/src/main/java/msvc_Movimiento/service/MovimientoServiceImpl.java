@@ -1,15 +1,19 @@
 package msvc_Movimiento.service;
 
 
-import msvc_Movimiento.dtos.CrearMovimientoDTO;
-import msvc_Movimiento.exception.MovimientoException;
+import msvc_Movimiento.client.InventarioClientRest;
+import msvc_Movimiento.dtos.InventarioUpdateDTO;
+import msvc_Movimiento.dtos.MovimientoDTO;
 import msvc_Movimiento.model.entity.Movimiento;
 import msvc_Movimiento.repository.MovimientoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MovimientoServiceImpl implements MovimientoService {
@@ -17,69 +21,99 @@ public class MovimientoServiceImpl implements MovimientoService {
     @Autowired
     private MovimientoRepository movimientoRepository;
 
+    @Autowired
+    private InventarioClientRest inventarioClient; // Cliente Feign para comunicarse con el microservicio de Inventario
 
-
-    //La diferencia es:
-    //  create() manda un INSERT, crea y guarda sin necesidad de instanciar
-    //  save() manda un INSERT sino un UPDATE si ya existe el objeto, da mas flexibilidad
-            //porque requiere instanciar el objeto manualmente, lo que te permite setear atributos uno a uno
-
-    /*
     @Override
     @Transactional
-    public CrearMovimientoDTO save(CrearMovimientoDTO movimientodto) {
-
-        Inventario inventario = this.inventarioRepository.findById(movimientodto.getIdInventario()).orElseThrow(() -> new InventarioException("No existe el Inventario"));
+    public MovimientoDTO crearMovimiento(MovimientoDTO dto) {
+        // 1. Crear y guardar la entidad Movimiento (esto no cambia)
         Movimiento movimiento = new Movimiento();
+        movimiento.setIdInventario(dto.getIdInventario());
+        movimiento.setFechaMovimiento(LocalDate.now());
+        movimiento.setCantidadMovimiento(dto.getCantidadMovimiento());
+        movimiento.setTipoMovimiento(dto.getTipoMovimiento());
 
-        movimiento.setInventario(inventario);
-        movimiento.setTipoMovimiento(movimientodto.getTipoMovimiento());
-        movimiento.setCantidadMovimiento(movimientodto.getCantidadMovimiento());
-        movimiento.setFechaMovimiento(movimientodto.getFechaMovimiento());
+        Movimiento nuevoMovimiento = movimientoRepository.save(movimiento);
 
-        //Aqui lo guardo realmente en el sistema
-        Movimiento procesoDeGuardadoReal = this.movimientoRepository.save(movimiento);
+        // 2. Calcular el ajuste para el inventario (esto no cambia)
+        float cantidadAjuste = 0;
+        switch (dto.getTipoMovimiento()) {
+            case ENTRADA:
+            case DEVOLUCION:
+                cantidadAjuste = dto.getCantidadMovimiento();
+                break;
+            case SALIDA:
+                cantidadAjuste = -dto.getCantidadMovimiento();
+                break;
+        }
 
-        //retorno beio del DTO
-        return cambiarDeMovimientoADTO(procesoDeGuardadoReal);
+        // 3. Preparar el DTO y llamar al microservicio de Inventario (ESTA ES LA PARTE ACTUALIZADA)
 
+        // Se crea el objeto DTO que representa el JSON
+        InventarioUpdateDTO adjustment = new InventarioUpdateDTO();
+        adjustment.setTotalInventario(cantidadAjuste);
+
+        // Se llama al cliente Feign pasando el DTO en el cuerpo de la petición
+        inventarioClient.updateTotalInventario(dto.getIdInventario(), adjustment);
+
+        return toDto(nuevoMovimiento);
     }
-    */
 
     @Override
-    public List<CrearMovimientoDTO> getMovimientosByInventario(Long idInventario) {
-        return movimientoRepository.findByInventarioIdInventario(idInventario).stream()
-                .map(this::cambiarDeMovimientoADTO)
+    public List<MovimientoDTO> findByIdInventario(Long idInventario) {
+        return movimientoRepository.findAllByIdInventario(idInventario)
+                .stream()
+                .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
+
     @Override
-    public CrearMovimientoDTO findById(Long id) {
-        Movimiento movimiento = this.movimientoRepository.findById(id).orElseThrow(
-                () -> new MovimientoException("No existe el Movimiento con el id: " + id));
-        return cambiarDeMovimientoADTO(movimiento);
+    public MovimientoDTO findById(Long id) {
+        Movimiento movimiento = movimientoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Movimiento no encontrado"));
+        return toDto(movimiento);
     }
 
     @Override
-    public void deleteMovimiento(Long id) {
-        Movimiento movimiento = movimientoRepository.findById(id).orElseThrow(
-                ()-> new MovimientoException("No existe el Movimiento"));
-        movimientoRepository.delete(movimiento);
+    public List<MovimientoDTO> findAll() {
+        return movimientoRepository.findAll().stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    //METODO CUSTOM PARA TRABAJAR CON OBJETOS DEL MODEL Y PASARLOS A DTO
-    private CrearMovimientoDTO cambiarDeMovimientoADTO(Movimiento movimiento) {
-        CrearMovimientoDTO dto = new CrearMovimientoDTO();
+    @Override
+    @Transactional
+    public MovimientoDTO update(Long id, MovimientoDTO dto) {
+        Movimiento mov = movimientoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Movimiento no encontrado"));
+        // Nota: Actualizar un movimiento puede ser complejo. ¿Debería revertirse el ajuste
+        // original y aplicar uno nuevo? Por simplicidad, aquí solo actualizamos los datos.
+        mov.setCantidadMovimiento(dto.getCantidadMovimiento());
+        mov.setTipoMovimiento(dto.getTipoMovimiento());
+        mov.setFechaMovimiento(LocalDate.now());
+        mov.setIdInventario(dto.getIdInventario());
 
-        Long id = movimiento.getIdMovimiento();
+        return toDto(movimientoRepository.save(mov));
+    }
 
-        dto.setIdMovimiento(id);
-        dto.setIdInventario(movimiento.getInventario().getIdInventario());
-        dto.setFechaMovimiento(movimiento.getFechaMovimiento());
-        dto.setCantidadMovimiento(movimiento.getCantidadMovimiento());
-        dto.setTipoMovimiento(movimiento.getTipoMovimiento());
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        // Nota: Borrar un movimiento debería idealmente revertir el ajuste en el inventario.
+        // Por simplicidad, aquí solo se borra el registro.
+        if (!movimientoRepository.existsById(id)) {
+            throw new RuntimeException("Movimiento no encontrado");
+        }
+        movimientoRepository.deleteById(id);
+    }
+
+    private MovimientoDTO toDto(Movimiento mov) {
+        MovimientoDTO dto = new MovimientoDTO();
+        dto.setIdMovimiento(mov.getIdMovimiento());
+        dto.setIdInventario(mov.getIdInventario());
+        dto.setFechaMovimiento(mov.getFechaMovimiento());
+        dto.setCantidadMovimiento(mov.getCantidadMovimiento());
+        dto.setTipoMovimiento(mov.getTipoMovimiento());
         return dto;
     }
-
-
 }

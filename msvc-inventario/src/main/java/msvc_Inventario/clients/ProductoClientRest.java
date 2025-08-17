@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 @FeignClient(name = "msvc-Producto", url = "http://localhost:8081/api/v1/producto")
 public interface ProductoClientRest {
 
@@ -23,5 +25,9 @@ public interface ProductoClientRest {
 
     @PostMapping
     Producto createProducto(@Validated @RequestBody Producto producto);
+
+    @PostMapping("/buscar-por-ids") // Lo utilizo en Inventario
+    List<Producto> obtenerPorIds(@RequestBody List<Long> ids);
+
 
 }

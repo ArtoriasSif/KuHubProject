@@ -1,8 +1,8 @@
 package msvc_Movimiento.controller;
 
-import jakarta.validation.Valid;
 
-import msvc_Movimiento.dtos.CrearMovimientoDTO;
+
+import msvc_Movimiento.dtos.MovimientoDTO;
 import msvc_Movimiento.service.MovimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,28 +22,33 @@ public class MovimientoController {
     private MovimientoService movimientoService;
 
     @PostMapping
-    public ResponseEntity<CrearMovimientoDTO> createMovimiento(@Valid @RequestBody CrearMovimientoDTO movimientoDTO) {
-        CrearMovimientoDTO movimientoACrear = this.movimientoService.save(movimientoDTO);
-        return new ResponseEntity<>(movimientoACrear, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/inventario/{idInventario}")
-    public ResponseEntity<List<CrearMovimientoDTO>> getMovimientoByInventario(@PathVariable Long idInventario) {
-        return ResponseEntity
-                .ok(this.movimientoService.getMovimientosByInventario(idInventario));
+    public ResponseEntity<MovimientoDTO> crear(@RequestBody MovimientoDTO movimientoDTO) {
+        return new ResponseEntity<>(movimientoService.crearMovimiento(movimientoDTO), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CrearMovimientoDTO> findById(@PathVariable Long id) {
-        return ResponseEntity
-                .ok(this.movimientoService.findById(id));
+    public ResponseEntity<MovimientoDTO> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(movimientoService.findById(id));
+    }
+
+    @GetMapping("/inventario/{idInventario}")
+    public ResponseEntity<List<MovimientoDTO>> obtenerPorIdInventario(@PathVariable Long idInventario) {
+        return ResponseEntity.ok(movimientoService.findByIdInventario(idInventario));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MovimientoDTO>> listarTodos() {
+        return ResponseEntity.ok(movimientoService.findAll());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MovimientoDTO> actualizar(@PathVariable Long id, @RequestBody MovimientoDTO dto) {
+        return ResponseEntity.ok(movimientoService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMovimiento(@PathVariable Long id) {
-        this.movimientoService.deleteMovimiento(id);
-        return ResponseEntity
-                .noContent().build();
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        movimientoService.delete(id);
+        return ResponseEntity.noContent().build();
     }
-
 }

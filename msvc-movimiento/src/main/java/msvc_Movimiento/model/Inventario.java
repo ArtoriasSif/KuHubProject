@@ -1,13 +1,9 @@
 package msvc_Movimiento.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
-import msvc_Movimiento.model.entity.Movimiento;
 
-import java.util.List;
+
+import lombok.*;
+
 
 @Data
 @NoArgsConstructor
