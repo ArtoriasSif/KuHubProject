@@ -53,7 +53,7 @@ public class DetalleProductoSolicitudController {
                 .body(detalleProductoSolicitudService.detalleProductoSolicitudUpdateQuantity(id, QuantityRequest));
     }
 
-    //Crear deletar detalle y todos los detalles del una solicitud
+
 
     @DeleteMapping("/detalle/{idDetalleProductoSolicitud}")
     public ResponseEntity <?> deleteDetallesByIdDetalleProductoSolicitud (@PathVariable Long idDetalleProductoSolicitud){
