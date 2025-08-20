@@ -7,90 +7,43 @@ spring:
   cloud:
     gateway:
       routes:
-
-        # Ruta para Inventario
-        - id: inventario-service
-          uri: lb://msvc-inventario  # Asegúrate que coincida con el nombre en Eureka
+        # Ruta para el microservicio de Usuarios
+        - id: msvc-usuario-route
+          uri: http://localhost:8084 # Dirección del microservicio
           predicates:
-            - Path=/api/v1/inventario/**
-          filters:
-            - StripPrefix=2  # Remueve /api/v1 del path antes de enviar al microservicio
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 10
-                redis-rate-limiter.burstCapacity: 20
-                key-resolver: "#{@userKeyResolver}"
+            - Path=/api/usuarios/** # Cualquier petición que empiece con /api/usuarios/ será redirigida
 
-        # Ruta para detalle producto solicitud
-        - id: detalle-producto-solicitud-route
-          uri: lb://msvc-solicitud  # Ajusta según tu servicio real
+        # Ruta para el microservicio de Productos
+        - id: msvc-producto-route
+          uri: http://localhost:8081
           predicates:
-            - Path=/api/v1/detalleproductosolicitud/**
-          filters:
-            - StripPrefix=2
+            - Path=/api/productos/**
 
-        # Ruta para solicitud
-        - id: solicitud-route
-          uri: lb://msvc-solicitud
+        # Ruta para el microservicio de Solicitudes
+        - id: msvc-solicitud-route
+          uri: http://localhost:8083
           predicates:
-            - Path=/api/v1/solicitud/**
-          filters:
-            - StripPrefix=2
+            - Path=/api/solicitudes/**
 
-        # Ruta para producto
-        - id: producto-route
-          uri: lb://msvc-inventario  # Ajusta según tu servicio real
+        # Ruta para el microservicio de Inventario
+        - id: msvc-inventario-route
+          uri: http://localhost:8085
           predicates:
-            - Path=/api/v1/producto/**
-          filters:
-            - StripPrefix=2
+            - Path=/api/inventario/**
 
-        # Ruta para movimiento
-        - id: movimiento-route
-          uri: lb://msvc-inventario  # Ajusta según tu servicio real
+        # ... y así sucesivamente para los demás microservicios
+
+        - id: msvc-detalle-solicitud-route
+          uri: http://localhost:8082
           predicates:
-            - Path=/api/v1/movimiento/**
-          filters:
-            - StripPrefix=2
+            - Path=/api/detalles-solicitud/**
 
-        # Ruta para usuario
-        - id: usuario-route
-          uri: lb://msvc-usuario  # Ajusta según tu servicio real
+        - id: msvc-rol-route
+          uri: http://localhost:8086
           predicates:
-            - Path=/api/v1/usuario/**
-          filters:
-            - StripPrefix=2
+            - Path=/api/roles/**
 
-        # Ruta para rol
-        - id: rol-route
-          uri: lb://msvc-usuario  # Ajusta según tu servicio real
+        - id: msvc-movimiento-route
+          uri: http://localhost:8087
           predicates:
-            - Path=/api/v1/rol/**
-          filters:
-            - StripPrefix=2
-
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-
-# Configuración de Eureka
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-    fetch-registry: true
-    register-with-eureka: true
-  instance:
-    prefer-ip-address: true
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-
-# Actuator para monitoreo
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,gateway
-  endpoint:
-    health:
-      show-details: always
+            - Path=/api/movimientos/**
