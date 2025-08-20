@@ -30,6 +30,7 @@
 		<module>msvc-Receta</module>					<!-- puerto 8087 -->
 		<module>msvc-DetalleReceta</module>				<!-- puerto 8088 -->
 		<module>msvc-apigateway</module>				<!-- puerto 8089 -->
+		<module>msvc-movimiento</module>				<!-- puerto 8090 -->
 
 	</modules>
 
