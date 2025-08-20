@@ -107,4 +107,8 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.findByNombreProducto(nombreProducto));
     }
 
+    @PostMapping("/buscar-por-ids") // Lo utilizo en Inventario
+    public List<Producto> obtenerPorIds(@RequestBody List<Long> ids) {
+        return productoService.findByIds(ids);
+    }
 }

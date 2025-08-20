@@ -14,5 +14,9 @@ public class InventarioDTO {
     private String nombreProducto;
     private String unidadMedida;
     private String ubicacionInventario;
-    private float totalInventario;
+    private Float totalInventario;
+    private Float inicialInventario;
+    private Float devolucionInventario;
+
+
 }

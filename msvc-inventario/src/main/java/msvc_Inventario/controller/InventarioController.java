@@ -1,6 +1,8 @@
 package msvc_Inventario.controller;
 
 
+import msvc_Inventario.dtos.InventarioDTO;
+import msvc_Inventario.dtos.InventarioUpdateDTO;
 import msvc_Inventario.models.entities.Inventario;
 import msvc_Inventario.services.InventarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,22 +23,29 @@ public class InventarioController {
     private InventarioService inventarioService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Inventario> findById(Long id){
+    public ResponseEntity<InventarioDTO> findById(@PathVariable Long id){
         return ResponseEntity.ok().body(this.inventarioService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Inventario> save(@Validated @RequestBody Inventario inventario){
-        return ResponseEntity.ok().body(this.inventarioService.save(inventario));
+    public ResponseEntity<InventarioDTO> save(@Validated @RequestBody InventarioDTO inventarioDTO){
+        return ResponseEntity.ok().body(this.inventarioService.save(inventarioDTO));
     }
 
     @GetMapping
-    public ResponseEntity<List<Inventario>> findAll(){
+    public ResponseEntity<List<InventarioDTO>> findAll(){
         return ResponseEntity.ok().body(this.inventarioService.findAll());
     }
 
     @GetMapping("/producto/{id}")
     public ResponseEntity<Inventario> getInventarioByIdProducto(@PathVariable Long id){
         return ResponseEntity.ok().body(this.inventarioService.getInventarioByIdProducto(id));
+    }
+
+    @PutMapping("/{id}/update-total") // Endpoint que no contiene la cantidad
+    public ResponseEntity<Void> updateTotalInventario(@PathVariable Long id, @RequestBody InventarioUpdateDTO totalInventario) { // Recibe el JSON
+
+        inventarioService.updateTotalInventario(id, totalInventario.getTotalInventario());
+        return ResponseEntity.ok().build();
     }
 }

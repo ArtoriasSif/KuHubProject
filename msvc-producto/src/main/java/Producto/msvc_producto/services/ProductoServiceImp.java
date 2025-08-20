@@ -6,9 +6,10 @@ import Producto.msvc_producto.exceptions.ProductoException;
 import Producto.msvc_producto.models.entity.Producto;
 import Producto.msvc_producto.repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -142,4 +143,9 @@ public class ProductoServiceImp implements ProductoService{
         productoRepository.deleteById(id);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Producto> findByIds(List<Long> ids) {
+        return productoRepository.findAllById(ids);
+    }
 }

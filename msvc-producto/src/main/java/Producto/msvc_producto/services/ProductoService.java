@@ -14,4 +14,5 @@ public interface ProductoService {
     Producto updateById(Long id, ProductoUpdateRequest productoRequest);
     void deleteById(Long id);
     void deleteByName(String nombreProducto);
+    List<Producto> findByIds(List<Long> ids);
 }

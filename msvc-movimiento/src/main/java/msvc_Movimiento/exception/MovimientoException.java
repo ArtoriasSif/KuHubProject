@@ -1,4 +1,4 @@
-package msvc_Inventario.exception;
+package msvc_Movimiento.exception;
 
 public class MovimientoException extends RuntimeException {
     public MovimientoException(String message) {
