@@ -1,7 +1,9 @@
 package Recetas.msvc_Recetas.Services;
 
+import Recetas.msvc_Recetas.clients.DetalleRecetaClientRest;
+import Recetas.msvc_Recetas.dtos.UpdateNameRecetaRequestDTO;
 import Recetas.msvc_Recetas.exceptions.RecetaException;
-import Recetas.msvc_Recetas.models.Receta;
+import Recetas.msvc_Recetas.models.entities.Receta;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,10 @@ public class RecetaServicesImp implements RecetaServices{
     @Autowired
     private RecetaRepository recetaRepository;
 
+    @Autowired
+    private DetalleRecetaClientRest detalleRecetaClientRest;
+
+    //Sin Detalles
     @Transactional
     @Override
     public List<Receta> findAllRecetas() {
@@ -30,6 +36,9 @@ public class RecetaServicesImp implements RecetaServices{
                 ()-> new RecetaException("La receta no existe")
         );
     }
+    //Con Detalles
+
+
 
     @Transactional
     @Override
@@ -47,6 +56,50 @@ public class RecetaServicesImp implements RecetaServices{
         receta.setNombreReceta(capitalizado);
 
         return recetaRepository.save(receta);
+    }
+
+    @Transactional
+    @Override
+    public Receta updateNameByIdReceta(Long idReceta, UpdateNameRecetaRequestDTO request) {
+        Receta receta = recetaRepository.findById(idReceta).orElseThrow(
+                () -> new RecetaException("La receta con el id " + idReceta + " no existe")
+        );
+
+        // normalizar y capitalizar
+        String nombre = request.getNombreReceta().trim();
+        String capitalizado = Arrays.stream(nombre.split("\\s+"))
+                .map(p -> p.substring(0, 1).toUpperCase() + p.substring(1).toLowerCase())
+                .collect(Collectors.joining(" "));
+
+        // validar que no exista otra receta con ese nombre
+        if (recetaRepository.existsByNombreRecetaAndIdRecetaNot(capitalizado, idReceta)) {
+            throw new RecetaException("Ya existe otra receta con el nombre: " + capitalizado);
+        }
+
+        // si el nombre es igual al actual,no actializa
+        if (capitalizado.equals(receta.getNombreReceta())) {
+            throw new RecetaException("El nombre es el mismo que ya tiene la receta.");
+        }
+
+        receta.setNombreReceta(capitalizado);
+        return recetaRepository.save(receta);
+    }
+
+    @Transactional
+    @Override
+    public void deleteByIdReceta(Long idReceta){
+
+        if (!recetaRepository.existsById(idReceta)) {
+            throw new RecetaException("La receta con el id " + idReceta + " no existe");
+        }
+        // Eliminar todos los detalles de la receta
+        if (!detalleRecetaClientRest.existsByIdReceta(idReceta)) {
+            throw new RecetaException("La receta con el id " + idReceta + " no tiene detalles asociados");
+        }
+        // Eliminar detalles de la receta
+        detalleRecetaClientRest.deleteDetallesByReceta(idReceta);
+        // Eliminar la receta
+        recetaRepository.deleteById(idReceta);
     }
 
 }

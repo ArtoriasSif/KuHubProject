@@ -1,4 +1,4 @@
-package DetalleReceta.msvc_DetalleReceta.models.entities;
+package DetalleReceta.msvc_DetalleReceta.models;
 
 import lombok.*;
 

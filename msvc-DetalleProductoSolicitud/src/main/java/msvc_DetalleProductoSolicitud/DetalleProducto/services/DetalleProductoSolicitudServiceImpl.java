@@ -3,7 +3,7 @@ package msvc_DetalleProductoSolicitud.DetalleProducto.services;
 import feign.FeignException;
 import msvc_DetalleProductoSolicitud.DetalleProducto.clients.ProductoClientRest;
 import msvc_DetalleProductoSolicitud.DetalleProducto.clients.SolicitudDocenteClientRest;
-import msvc_DetalleProductoSolicitud.DetalleProducto.dtos.DetalleProductoSolicitudUpdateQuantityRequest;
+import msvc_DetalleProductoSolicitud.DetalleProducto.dtos.DetalleProductoSolicitudUpdateQuantityRequestDTO;
 import msvc_DetalleProductoSolicitud.DetalleProducto.exceptions.DetalleProductoSolicitudException;
 import msvc_DetalleProductoSolicitud.DetalleProducto.models.Producto;
 import msvc_DetalleProductoSolicitud.DetalleProducto.models.entity.DetalleProductoSolicitud;
@@ -64,7 +64,7 @@ public class DetalleProductoSolicitudServiceImpl implements DetalleProductoSolic
     @Transactional
     @Override
     public DetalleProductoSolicitud detalleProductoSolicitudUpdateQuantity
-            (Long id, DetalleProductoSolicitudUpdateQuantityRequest quantityRequest) {
+            (Long id, DetalleProductoSolicitudUpdateQuantityRequestDTO quantityRequest) {
         DetalleProductoSolicitud detalleProductoSolicitud = detalleProductoSolicitudRepository.findById(id).orElseThrow(
                 () -> new DetalleProductoSolicitudException("Detalle de producto solicitud con el id " + id + " no encontrado")
         );

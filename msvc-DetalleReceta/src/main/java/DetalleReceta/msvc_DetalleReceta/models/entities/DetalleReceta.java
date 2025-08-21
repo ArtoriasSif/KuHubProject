@@ -1,4 +1,4 @@
-package DetalleReceta.msvc_DetalleReceta.models;
+package DetalleReceta.msvc_DetalleReceta.models.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;

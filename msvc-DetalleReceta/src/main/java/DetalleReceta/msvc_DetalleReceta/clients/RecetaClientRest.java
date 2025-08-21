@@ -1,8 +1,7 @@
 package DetalleReceta.msvc_DetalleReceta.clients;
 
-import DetalleReceta.msvc_DetalleReceta.models.entities.Receta;
+import DetalleReceta.msvc_DetalleReceta.models.Receta;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
