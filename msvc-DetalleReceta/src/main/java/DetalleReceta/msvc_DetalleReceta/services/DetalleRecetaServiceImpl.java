@@ -4,6 +4,7 @@ package DetalleReceta.msvc_DetalleReceta.services;
 import DetalleReceta.msvc_DetalleReceta.clients.ProductoClientRest;
 import DetalleReceta.msvc_DetalleReceta.clients.RecetaClientRest;
 import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaIUpdateQuantityRequestDTO;
+import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaResponseDTO;
 import DetalleReceta.msvc_DetalleReceta.exceptions.DetalleRecetaException;
 import DetalleReceta.msvc_DetalleReceta.models.entities.DetalleReceta;
 import DetalleReceta.msvc_DetalleReceta.models.Producto;
@@ -39,6 +40,29 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
     @Override
     public List<DetalleReceta> findAllRecetas() {
         return detalleRecetaRepository.findAll();
+    }
+
+    @Transactional
+    @Override
+    public List<DetalleRecetaResponseDTO> findAllRecetasConDetalles (){
+        if (detalleRecetaRepository.findAll().isEmpty()) {
+            throw new DetalleRecetaException("No hay detalles de receta registrados");
+        }
+
+        List<DetalleRecetaResponseDTO> responseDTOs;
+
+        for (DetalleReceta d : detalleRecetaRepository.findAll()) {
+            responseDTOs.add(new DetalleRecetaResponseDTO(
+                    d.getIdDetalleReceta()
+                    d.getIdReceta(),
+                    d.getIdProducto()
+
+                    ));
+
+        }
+
+        return detalleRecetaRepository.findAllRecetasConDetalles();
+
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package DetalleReceta.msvc_DetalleReceta.controllers;
 
 import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaIUpdateQuantityRequestDTO;
+import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaResponseDTO;
 import DetalleReceta.msvc_DetalleReceta.exceptions.DetalleRecetaException;
 import DetalleReceta.msvc_DetalleReceta.models.entities.DetalleReceta;
 import DetalleReceta.msvc_DetalleReceta.services.DetalleRecetaService;
@@ -9,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 //server.port=8088
 @RestController
@@ -31,6 +34,14 @@ public class DetalleRecetaController {
         return ResponseEntity
                 .status(200)
                 .body(detalleRecetaService.findAllRecetas());
+    }
+
+    //Listar con Detalle DTO
+    @GetMapping("/detalles")
+    public ResponseEntity<List<DetalleRecetaResponseDTO>> findAllDetalleRecetaConDetalles(){
+        return ResponseEntity
+                .status(200)
+                .body(detalleRecetaService.findAllRecetasConDetalles());
     }
 
     // Metodo acedido por client para verificar si existe una receta
