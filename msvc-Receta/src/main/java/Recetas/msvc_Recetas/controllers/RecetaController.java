@@ -36,8 +36,6 @@ public class RecetaController {
     }
 
     //Recetas con detalles
-    @GetMapping("/detalles")
-
 
 
 

@@ -14,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DetalleRecetaServiceImpl implements DetalleRecetaService {
@@ -42,28 +45,69 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
         return detalleRecetaRepository.findAll();
     }
 
-    @Transactional
+    // Listar con Detalle DTO
+    @Transactional(readOnly = true)
     @Override
-    public List<DetalleRecetaResponseDTO> findAllRecetasConDetalles (){
-        if (detalleRecetaRepository.findAll().isEmpty()) {
+    public List<DetalleRecetaResponseDTO> findAllRecetasConDetalles() {
+        List<DetalleReceta> detalles = detalleRecetaRepository.findAll();
+
+        if (detalles.isEmpty()) {
             throw new DetalleRecetaException("No hay detalles de receta registrados");
         }
 
-        List<DetalleRecetaResponseDTO> responseDTOs;
+        List<DetalleRecetaResponseDTO> responseDTOs = new ArrayList<>();
+        Map<Long, Producto> cacheProductos = new HashMap<>();
 
-        for (DetalleReceta d : detalleRecetaRepository.findAll()) {
+        for (DetalleReceta d : detalles) {
+            Producto p = cacheProductos.computeIfAbsent(d.getIdProducto(), id -> {
+                try {
+                    Producto producto = productoClientRest.findProductoById(id);
+                    if (producto == null) {
+                        throw new DetalleRecetaException("Producto con id " + id + " no encontrado");
+                    }
+                    return producto;
+                } catch (Exception e) {
+                    throw new DetalleRecetaException("Error al consultar producto con id " + id + ": " + e.getMessage());
+                }
+            });
+
             responseDTOs.add(new DetalleRecetaResponseDTO(
-                    d.getIdDetalleReceta()
+                    d.getIdDetalleReceta(),
                     d.getIdReceta(),
-                    d.getIdProducto()
+                    d.getIdProducto(),
+                    p.getNombreProducto(),
+                    p.getUnidadMedida(),
+                    d.getCantidadUnidadMedida()
+            ));
+        }
+        return responseDTOs;
+    }
 
-                    ));
 
+    @Transactional(readOnly = true)
+    @Override
+    public DetalleRecetaResponseDTO findByIdRecetasConDetalles(Long idDetalleReceta) {
+        DetalleReceta detalle = detalleRecetaRepository.findById(idDetalleReceta)
+                .orElseThrow(() -> new DetalleRecetaException(
+                        "El detalle de receta con id " + idDetalleReceta + " no existe"));
+
+        Producto producto;
+        try {
+            producto = productoClientRest.findProductoById(detalle.getIdProducto());
+        } catch (Exception e) {
+            throw new DetalleRecetaException("Producto con id " + detalle.getIdProducto() + " no encontrado");
         }
 
-        return detalleRecetaRepository.findAllRecetasConDetalles();
-
+        return new DetalleRecetaResponseDTO(
+                detalle.getIdDetalleReceta(),
+                detalle.getIdReceta(),
+                detalle.getIdProducto(),
+                producto.getNombreProducto(),
+                producto.getUnidadMedida(),
+                detalle.getCantidadUnidadMedida()
+        );
     }
+
 
     @Transactional
     @Override

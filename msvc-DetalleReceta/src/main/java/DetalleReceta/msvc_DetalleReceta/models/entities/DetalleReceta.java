@@ -6,9 +6,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
-@Table(name="detalle_receta")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString
-
+@Table(name = "detalle_receta")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class DetalleReceta {
 
     @Id
@@ -25,7 +28,7 @@ public class DetalleReceta {
     private Long idProducto;
 
     @Column(name="cantidad_unidad_medida")
-    @Digits(integer = 7, fraction = 3, message = "Máximo 3 decimales permitidos")
     @NotNull(message = "El campo cantidad no puede ser vacio")
     private Float cantidadUnidadMedida;
 }
+

@@ -22,11 +22,12 @@ public class DetalleRecetaController {
     @Autowired
     private DetalleRecetaService detalleRecetaService;
 
+    //Listar sin detalles
     @GetMapping("/{id}")
-    public ResponseEntity<DetalleReceta> findById(@PathVariable Long id){
+    public ResponseEntity<DetalleReceta> findById(@PathVariable Long idDetalleReceta){
         return ResponseEntity
                 .status(200)
-                .body(detalleRecetaService.findByIdReceta(id));
+                .body(detalleRecetaService.findByIdReceta(idDetalleReceta));
     }
 
     @GetMapping
@@ -36,13 +37,23 @@ public class DetalleRecetaController {
                 .body(detalleRecetaService.findAllRecetas());
     }
 
-    //Listar con Detalle DTO
+
+    // Listar todos los detalles de receta con DTO
     @GetMapping("/detalles")
-    public ResponseEntity<List<DetalleRecetaResponseDTO>> findAllDetalleRecetaConDetalles(){
+    public ResponseEntity<List<DetalleRecetaResponseDTO>> findAllDetalleRecetaConDetalles() {
         return ResponseEntity
                 .status(200)
                 .body(detalleRecetaService.findAllRecetasConDetalles());
     }
+
+    // Obtener un detalle específico por idDetalleReceta
+    @GetMapping("/detales/{idDetalleReceta}")
+    public ResponseEntity<DetalleRecetaResponseDTO> findByIdRecetasConDetalles(@PathVariable Long idDetalleReceta) {
+        return ResponseEntity
+                .status(200)
+                .body(detalleRecetaService.findByIdRecetasConDetalles(idDetalleReceta));
+    }
+
 
     // Metodo acedido por client para verificar si existe una receta
     @GetMapping("/existeReceta/{idReceta}")
@@ -68,7 +79,7 @@ public class DetalleRecetaController {
     }
 
     //Detelar en cascada, todos los detalles de una receta, funcionalidad asignada a ADM
-    @DeleteMapping("/deletardetalles/{idReceta}")
+    @DeleteMapping("/deletartodosdetalles/{idReceta}")
     public ResponseEntity<Void> deleteDetallesByIdReceta(@PathVariable Long idReceta) {
         try {
             detalleRecetaService.deletarTodoByIdReceta(idReceta);
@@ -80,7 +91,7 @@ public class DetalleRecetaController {
         }
     }
 
-    @DeleteMapping("/idDetalleReceta/{idDetalleReceta}")
+    @DeleteMapping("/deletardetalle/{idDetalleReceta}")
     public ResponseEntity<Void> deleteDetalleRecetaById(@PathVariable Long idDetalleReceta) {
         try {
             detalleRecetaService.deleteByidDetalleReceta(idDetalleReceta);

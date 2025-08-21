@@ -10,6 +10,7 @@ public interface DetalleRecetaService {
     DetalleReceta findByIdReceta(Long id);
     List<DetalleReceta> findAllRecetas();
     List<DetalleRecetaResponseDTO> findAllRecetasConDetalles ();
+    DetalleRecetaResponseDTO findByIdRecetasConDetalles(Long idDetalleReceta);
     DetalleReceta saveDetalleReceta(DetalleReceta detalleReceta);
     DetalleReceta detalleRecetaUpdateQuantity
             (Long id, DetalleRecetaIUpdateQuantityRequestDTO quantityRequest);
