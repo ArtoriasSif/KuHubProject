@@ -10,4 +10,5 @@ public interface SolicitudDocenteService {
     List<SolicitudDocente> findAll() ;
     List<SolicitudDocenteResponseDTO> findAllSolicitudDocentesConDetalles();
     SolicitudDocente findByIdSolicitudDocente(Long id);
+
 }

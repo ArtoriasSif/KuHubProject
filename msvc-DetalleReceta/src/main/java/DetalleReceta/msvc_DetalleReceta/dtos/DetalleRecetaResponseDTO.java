@@ -1,6 +1,8 @@
-package msvc_SolicitudDocente.msvc_SolicitudDocente.dtos;
+package DetalleReceta.msvc_DetalleReceta.dtos;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.Digits;
 import lombok.*;
 
 @Getter
@@ -8,15 +10,20 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class DetalleProductoSolicitudResponseDTO {
+public class DetalleRecetaResponseDTO {
 
-    private Long idDetalleProductoSolicitud;
     @JsonIgnore
-    private Long idSolicitudDocente;
+    private Long idDetalleReceta;
+    @JsonIgnore
+    private Long idReceta;
     @JsonIgnore
     private Long idProducto;
+
     private String nombreProducto;
+
     private String unidadMedida;
+
     private Float cantidadUnidadMedida;
+
 
 }

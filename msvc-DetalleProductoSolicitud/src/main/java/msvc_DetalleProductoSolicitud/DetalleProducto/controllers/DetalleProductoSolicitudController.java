@@ -1,6 +1,6 @@
 package msvc_DetalleProductoSolicitud.DetalleProducto.controllers;
 
-import msvc_DetalleProductoSolicitud.DetalleProducto.dtos.DetalleProductoSolicitudUpdateQuantityRequest;
+import msvc_DetalleProductoSolicitud.DetalleProducto.dtos.DetalleProductoSolicitudUpdateQuantityRequestDTO;
 import msvc_DetalleProductoSolicitud.DetalleProducto.exceptions.DetalleProductoSolicitudException;
 import msvc_DetalleProductoSolicitud.DetalleProducto.models.entity.DetalleProductoSolicitud;
 import msvc_DetalleProductoSolicitud.DetalleProducto.services.DetalleProductoSolicitudService;
@@ -47,7 +47,7 @@ public class DetalleProductoSolicitudController {
     @PutMapping("/cantidad/{id}")
     public ResponseEntity<DetalleProductoSolicitud> detalleProductoSolicitudUpdateQuantity
     (@PathVariable Long id,
-    @Validated @RequestBody DetalleProductoSolicitudUpdateQuantityRequest QuantityRequest){
+    @Validated @RequestBody DetalleProductoSolicitudUpdateQuantityRequestDTO QuantityRequest){
         return ResponseEntity
                 .status(200)
                 .body(detalleProductoSolicitudService.detalleProductoSolicitudUpdateQuantity(id, QuantityRequest));
