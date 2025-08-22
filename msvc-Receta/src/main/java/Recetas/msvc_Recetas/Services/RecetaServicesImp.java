@@ -6,15 +6,17 @@ import Recetas.msvc_Recetas.dtos.RecetaResponseDTO;
 import Recetas.msvc_Recetas.dtos.UpdateNameRecetaRequestDTO;
 import Recetas.msvc_Recetas.exceptions.RecetaException;
 import Recetas.msvc_Recetas.models.entities.Receta;
+import feign.FeignException;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import Recetas.msvc_Recetas.repositories.RecetaRepository;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class RecetaServicesImp implements RecetaServices{
 
@@ -54,6 +56,46 @@ public class RecetaServicesImp implements RecetaServices{
                 receta.getNombreReceta(),
                 detalles
         );
+    }
+
+
+
+    @Transactional
+    @Override
+    public List<RecetaResponseDTO> findAllRecetasConDetalles() {
+        log.info("Iniciando búsqueda de todas las recetas con detalles");
+
+        List<Receta> recetaModel = recetaRepository.findAll();
+
+        if (recetaModel.isEmpty()) {
+            log.warn("No existen recetas registradas en la base de datos");
+            throw new RuntimeException("No existen recetas registradas");
+        }
+
+        List<RecetaResponseDTO> recetaDTOs = new ArrayList<>();
+
+        for (Receta recMod : recetaModel) {
+            List<DetalleRecetaResponseDTO> detalles;
+            try {
+                detalles = Optional.ofNullable(
+                        detalleRecetaClientRest.findAllByIdRecetaConDetalles(recMod.getIdReceta()).getBody()
+                ).orElse(Collections.emptyList());
+            } catch (FeignException e) {
+                log.error("Servicio DetalleReceta no disponible para receta {}", recMod.getIdReceta());
+                detalles = Collections.emptyList();
+            }
+
+            log.info("Receta {} tiene {} detalles", recMod.getNombreReceta(), detalles.size());
+
+            recetaDTOs.add(new RecetaResponseDTO(
+                    recMod.getIdReceta(),
+                    recMod.getNombreReceta(),
+                    detalles
+            ));
+        }
+
+        log.info("Finalizó búsqueda de recetas, total: {}", recetaDTOs.size());
+        return recetaDTOs;
     }
 
 

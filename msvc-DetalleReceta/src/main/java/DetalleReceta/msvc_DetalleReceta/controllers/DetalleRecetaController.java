@@ -31,7 +31,7 @@ public class DetalleRecetaController {
     }
 
     @GetMapping
-    public ResponseEntity<Iterable<DetalleReceta>> findAllDetalleRecetas(){
+    public ResponseEntity<List<DetalleReceta>> findAllDetalleRecetas(){
         return ResponseEntity
                 .status(200)
                 .body(detalleRecetaService.findAllDetalleRecetas());

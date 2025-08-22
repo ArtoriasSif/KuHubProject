@@ -44,6 +44,13 @@ public class RecetaController {
                 .body(recetaServices.findByIdRecetasConDetalles(idReceta));
     }
 
+    @GetMapping("/detalles")
+    public ResponseEntity<List<RecetaResponseDTO>> findAllRecetasConDetalles() {
+        return ResponseEntity
+                .status(200)
+                .body(recetaServices.findAllRecetasConDetalles());
+    }
+
 
     @PostMapping
     public ResponseEntity<Receta> createReceta(@RequestBody Receta receta) {

@@ -33,9 +33,9 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
 
     @Transactional
     @Override
-    public DetalleReceta findByIdDetalleReceta(Long IdDetalleReceta){
-        return detalleRecetaRepository.findById(IdDetalleReceta).orElseThrow(
-                () -> new RuntimeException("Detalle Receta con id: "+IdDetalleReceta+" no encontrado")
+    public DetalleReceta findByIdDetalleReceta(Long idDetalleReceta){
+        return detalleRecetaRepository.findById(idDetalleReceta).orElseThrow(
+                () -> new RuntimeException("Detalle Receta con id: "+idDetalleReceta+" no encontrado")
         );
     }
 
