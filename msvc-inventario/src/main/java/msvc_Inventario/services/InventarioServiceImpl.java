@@ -28,7 +28,7 @@ public class InventarioServiceImpl implements InventarioService {
     @Override
     @Transactional
     public InventarioDTO save(InventarioDTO dto) {
-        // Tu lógica de save (crear o sumar cantidad) está bien.
+
         Producto producto = findOrCreateProducto(dto);
 
         Inventario inventario = this.inventarioRepository.findByIdProducto(producto.getIdProducto())
@@ -110,6 +110,11 @@ public class InventarioServiceImpl implements InventarioService {
     public Inventario getInventarioByIdProducto(Long idProducto) {
         return this.inventarioRepository.findByIdProducto(idProducto)
                 .orElseThrow(() -> new InventarioException("No existe inventario para el producto con ID: " + idProducto));
+    }
+    @Override
+    public Producto findProductoByIdInventario(Long idInventario){
+        return this.inventarioRepository.findProductoByIdInventario(idInventario)
+                .orElseThrow(()-> new InventarioException("No existe el producto con ID: " + idInventario));
     }
 
     @Transactional

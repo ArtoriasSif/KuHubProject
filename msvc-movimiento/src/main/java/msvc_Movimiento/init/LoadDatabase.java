@@ -47,6 +47,7 @@ public class LoadDatabase implements CommandLineRunner {
 
                 mov.setCantidadMovimiento(5);
                 mov.setIdInventario(idPrueba);
+                mov.setIdProducto(idPrueba);
                 mov.setTipoMovimiento(tiposDeMovimiento[random.nextInt(tiposDeMovimiento.length)]);
 
 

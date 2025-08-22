@@ -30,6 +30,7 @@ public class MovimientoServiceImpl implements MovimientoService {
         // 1. Crear y guardar la entidad Movimiento (esto no cambia)
         Movimiento movimiento = new Movimiento();
         movimiento.setIdInventario(dto.getIdInventario());
+        movimiento.setIdProducto(dto.getIdProducto());
         movimiento.setFechaMovimiento(LocalDate.now());
         movimiento.setCantidadMovimiento(dto.getCantidadMovimiento());
         movimiento.setTipoMovimiento(dto.getTipoMovimiento());
@@ -68,6 +69,13 @@ public class MovimientoServiceImpl implements MovimientoService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<MovimientoDTO> findByIdProducto(Long idProducto){
+        return movimientoRepository.findAllByIdProducto(idProducto)
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public MovimientoDTO findById(Long id) {
@@ -92,6 +100,7 @@ public class MovimientoServiceImpl implements MovimientoService {
         mov.setTipoMovimiento(dto.getTipoMovimiento());
         mov.setFechaMovimiento(LocalDate.now());
         mov.setIdInventario(dto.getIdInventario());
+        mov.setIdProducto(dto.getIdProducto());
 
         return toDto(movimientoRepository.save(mov));
     }
@@ -111,6 +120,7 @@ public class MovimientoServiceImpl implements MovimientoService {
         MovimientoDTO dto = new MovimientoDTO();
         dto.setIdMovimiento(mov.getIdMovimiento());
         dto.setIdInventario(mov.getIdInventario());
+        dto.setIdProducto(mov.getIdProducto());
         dto.setFechaMovimiento(mov.getFechaMovimiento());
         dto.setCantidadMovimiento(mov.getCantidadMovimiento());
         dto.setTipoMovimiento(mov.getTipoMovimiento());

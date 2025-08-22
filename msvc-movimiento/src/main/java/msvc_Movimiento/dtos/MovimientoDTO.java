@@ -15,6 +15,7 @@ public class MovimientoDTO {
 
     private Long idMovimiento;
     private Long idInventario;
+    private Long idProducto;
     private LocalDate fechaMovimiento;
     private float cantidadMovimiento;
     private TipoMovimiento tipoMovimiento;

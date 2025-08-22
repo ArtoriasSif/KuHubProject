@@ -4,6 +4,7 @@ package msvc_Inventario.controller;
 import msvc_Inventario.dtos.InventarioDTO;
 import msvc_Inventario.dtos.InventarioUpdateDTO;
 import msvc_Inventario.models.entities.Inventario;
+import msvc_Inventario.models.Producto;
 import msvc_Inventario.services.InventarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,9 +38,14 @@ public class InventarioController {
         return ResponseEntity.ok().body(this.inventarioService.findAll());
     }
 
-    @GetMapping("/producto/{id}")
+    @GetMapping("/getinventario/{idProducto}")
     public ResponseEntity<Inventario> getInventarioByIdProducto(@PathVariable Long id){
         return ResponseEntity.ok().body(this.inventarioService.getInventarioByIdProducto(id));
+    }
+
+    @GetMapping("/getproducto/{idInventario}")
+    public ResponseEntity<Producto> getProductoByIdInventario(@PathVariable Long id){
+        return ResponseEntity.ok().body(this.inventarioService.findProductoByIdInventario(id));
     }
 
     @PutMapping("/{id}/update-total") // Endpoint que no contiene la cantidad
