@@ -7,43 +7,53 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: msvc-receta-route
+          uri: http://localhost:8087 
+          predicates:
+            - Path=/api/v1/receta/**
+                   
+        - id: msvc-detallereceta-route
+          uri: http://localhost:8088
+          predicates:
+            - Path=/api/v1/detallereceta/**
+
         # Ruta para el microservicio de Usuarios
         - id: msvc-usuario-route
-          uri: http://localhost:8084 # Dirección del microservicio
+          uri: http://localhost:8084
           predicates:
-            - Path=/api/usuarios/** # Cualquier petición que empiece con /api/usuarios/ será redirigida
+            - Path=/api/v1/usuario/** # Cualquier petición que empiece con /api/usuarios/ será redirigida
 
         # Ruta para el microservicio de Productos
         - id: msvc-producto-route
           uri: http://localhost:8081
           predicates:
-            - Path=/api/productos/**
+            - Path=/api/v1/producto/**
 
         # Ruta para el microservicio de Solicitudes
         - id: msvc-solicitud-route
           uri: http://localhost:8083
           predicates:
-            - Path=/api/solicitudes/**
+            - Path=/api/v1/solicituddocente**
 
         # Ruta para el microservicio de Inventario
         - id: msvc-inventario-route
           uri: http://localhost:8085
           predicates:
-            - Path=/api/inventario/**
+            - Path=/api/v1/inventario/**
 
         # ... y así sucesivamente para los demás microservicios
 
         - id: msvc-detalle-solicitud-route
           uri: http://localhost:8082
           predicates:
-            - Path=/api/detalles-solicitud/**
+            - Path=/api/v1/detalleproductosolicitud/**
 
         - id: msvc-rol-route
           uri: http://localhost:8086
           predicates:
-            - Path=/api/roles/**
+            - Path=/api/v1/rol/**
 
         - id: msvc-movimiento-route
           uri: http://localhost:8087
           predicates:
-            - Path=/api/movimientos/**
+            - Path=/api/v1/movimiento/**
