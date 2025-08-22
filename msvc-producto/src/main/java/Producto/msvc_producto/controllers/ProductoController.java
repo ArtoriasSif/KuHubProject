@@ -23,7 +23,7 @@ public class ProductoController {
     @Autowired
     private ProductoService productoService;
 
-    //Medotos creado solamete para aceder los productos por client rest para la solicitude.
+    //Metodos creado solamente para acceder los productos por client rest para la solicitude.
 
     @GetMapping
     public ResponseEntity<List<Producto>> findAllProductos(){

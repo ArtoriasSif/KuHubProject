@@ -1,12 +1,8 @@
-package Recetas.msvc_Recetas.models;
+package Recetas.msvc_Recetas.models.entities;
 
-import Recetas.msvc_Recetas.dtos.DetalleProductoSolicitudRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
-
-import java.util.List;
 
 
 @Entity

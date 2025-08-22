@@ -27,8 +27,7 @@ public class DetalleProductoSolicitud {
     @NotNull(message = "El campo id producto no puede ser vacio")
     private Long    idProducto;
 
-    @Column(name = "cantidad_unidad_medida", precision = 10, scale = 3)
-    @Digits(integer = 7, fraction = 3, message = "Máximo 3 decimales permitidos")
+    @Column(name = "cantidad_unidad_medida")
     @NotNull(message = "El campo id cantidad unidad medida no puede ser vacio")
     private Float cantidadUnidadMedida;
 }
