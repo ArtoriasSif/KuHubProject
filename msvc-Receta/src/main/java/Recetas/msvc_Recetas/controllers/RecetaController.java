@@ -1,6 +1,7 @@
 package Recetas.msvc_Recetas.controllers;
 
 import Recetas.msvc_Recetas.Services.RecetaServices;
+import Recetas.msvc_Recetas.dtos.RecetaResponseDTO;
 import Recetas.msvc_Recetas.dtos.UpdateNameRecetaRequestDTO;
 import Recetas.msvc_Recetas.models.entities.Receta;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,12 @@ public class RecetaController {
     }
 
     //Recetas con detalles
-
+    @GetMapping("/detalles/{idReceta}")
+    public ResponseEntity<RecetaResponseDTO> findByIdRecetasConDetalles(@PathVariable Long idReceta) {
+        return ResponseEntity
+                .status(200)
+                .body(recetaServices.findByIdRecetasConDetalles(idReceta));
+    }
 
 
     @PostMapping

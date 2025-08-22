@@ -33,22 +33,22 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
 
     @Transactional
     @Override
-    public DetalleReceta findByIdReceta(Long id){
-        return detalleRecetaRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Detalle Receta con id: "+id+" no encontrado")
+    public DetalleReceta findByIdDetalleReceta(Long IdDetalleReceta){
+        return detalleRecetaRepository.findById(IdDetalleReceta).orElseThrow(
+                () -> new RuntimeException("Detalle Receta con id: "+IdDetalleReceta+" no encontrado")
         );
     }
 
     @Transactional
     @Override
-    public List<DetalleReceta> findAllRecetas() {
+    public List<DetalleReceta> findAllDetalleRecetas() {
         return detalleRecetaRepository.findAll();
     }
 
     // Listar con Detalle DTO
     @Transactional(readOnly = true)
     @Override
-    public List<DetalleRecetaResponseDTO> findAllRecetasConDetalles() {
+    public List<DetalleRecetaResponseDTO> findAllDetalleRecetasConDetalles() {
         List<DetalleReceta> detalles = detalleRecetaRepository.findAll();
 
         if (detalles.isEmpty()) {
@@ -61,7 +61,7 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
         for (DetalleReceta d : detalles) {
             Producto p = cacheProductos.computeIfAbsent(d.getIdProducto(), id -> {
                 try {
-                    Producto producto = productoClientRest.findProductoById(id);
+                    Producto producto = productoClientRest.findProductoById(id).getBody();
                     if (producto == null) {
                         throw new DetalleRecetaException("Producto con id " + id + " no encontrado");
                     }
@@ -83,6 +83,32 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
         return responseDTOs;
     }
 
+    //Lista todos detalles de una id recete con detalles DTO
+    @Transactional
+    @Override
+    public List<DetalleRecetaResponseDTO> findAllByIdRecetaConDetalles(Long idReceta) {
+        if(!detalleRecetaRepository.existsByIdReceta(idReceta)){
+            throw new DetalleRecetaException("La receta con id "+idReceta+" no existe");
+        }
+        List<DetalleReceta> detalleReceta = detalleRecetaRepository.findAllByIdReceta(idReceta);
+        List<DetalleRecetaResponseDTO> responseDTOs = new ArrayList<>();
+        for (DetalleReceta d : detalleReceta) {
+
+            Producto p = productoClientRest.findProductoById(d.getIdProducto()).getBody();
+            assert p != null;
+
+            responseDTOs.add(new DetalleRecetaResponseDTO(
+                    d.getIdDetalleReceta(),
+                    d.getIdReceta(),
+                    p.getIdProducto(),
+                    p.getNombreProducto(),
+                    p.getUnidadMedida(),
+                    d.getCantidadUnidadMedida()
+            ));
+        }
+        return responseDTOs;
+
+    }
 
     @Transactional(readOnly = true)
     @Override
@@ -93,11 +119,11 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
 
         Producto producto;
         try {
-            producto = productoClientRest.findProductoById(detalle.getIdProducto());
+            producto = productoClientRest.findProductoById(detalle.getIdProducto()).getBody();
         } catch (Exception e) {
             throw new DetalleRecetaException("Producto con id " + detalle.getIdProducto() + " no encontrado");
         }
-
+        assert producto != null;
         return new DetalleRecetaResponseDTO(
                 detalle.getIdDetalleReceta(),
                 detalle.getIdReceta(),
@@ -126,7 +152,7 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
         }
 
         try{
-            Producto producto = productoClientRest.findProductoById(detalleReceta.getIdProducto());
+            Producto producto = productoClientRest.findProductoById(detalleReceta.getIdProducto()).getBody();
         }catch (Exception e){
             throw new DetalleRecetaException("Producto no encontrado");
         }

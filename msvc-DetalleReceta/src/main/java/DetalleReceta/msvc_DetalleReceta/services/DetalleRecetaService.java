@@ -7,9 +7,10 @@ import DetalleReceta.msvc_DetalleReceta.models.entities.DetalleReceta;
 import java.util.List;
 
 public interface DetalleRecetaService {
-    DetalleReceta findByIdReceta(Long id);
-    List<DetalleReceta> findAllRecetas();
-    List<DetalleRecetaResponseDTO> findAllRecetasConDetalles ();
+    DetalleReceta findByIdDetalleReceta(Long IdDetalleReceta);
+    List<DetalleReceta> findAllDetalleRecetas();
+    List<DetalleRecetaResponseDTO> findAllDetalleRecetasConDetalles ();
+    List<DetalleRecetaResponseDTO> findAllByIdRecetaConDetalles(Long idReceta);
     DetalleRecetaResponseDTO findByIdRecetasConDetalles(Long idDetalleReceta);
     DetalleReceta saveDetalleReceta(DetalleReceta detalleReceta);
     DetalleReceta detalleRecetaUpdateQuantity

@@ -24,31 +24,39 @@ public class DetalleRecetaController {
 
     //Listar sin detalles
     @GetMapping("/{id}")
-    public ResponseEntity<DetalleReceta> findById(@PathVariable Long idDetalleReceta){
+    public ResponseEntity<DetalleReceta> findByIdDetalleReceta(@PathVariable Long idDetalleReceta){
         return ResponseEntity
                 .status(200)
-                .body(detalleRecetaService.findByIdReceta(idDetalleReceta));
+                .body(detalleRecetaService.findByIdDetalleReceta(idDetalleReceta));
     }
 
     @GetMapping
-    public ResponseEntity<Iterable<DetalleReceta>> findAllDetalleReceta(){
+    public ResponseEntity<Iterable<DetalleReceta>> findAllDetalleRecetas(){
         return ResponseEntity
                 .status(200)
-                .body(detalleRecetaService.findAllRecetas());
+                .body(detalleRecetaService.findAllDetalleRecetas());
     }
 
 
     // Listar todos los detalles de receta con DTO
     @GetMapping("/detalles")
-    public ResponseEntity<List<DetalleRecetaResponseDTO>> findAllDetalleRecetaConDetalles() {
+    public ResponseEntity<List<DetalleRecetaResponseDTO>> findAllDetalleRecetasConDetalles() {
         return ResponseEntity
                 .status(200)
-                .body(detalleRecetaService.findAllRecetasConDetalles());
+                .body(detalleRecetaService.findAllDetalleRecetasConDetalles());
     }
 
+    @GetMapping("/detalles/recetas/{idReceta}")
+    public ResponseEntity<List<DetalleRecetaResponseDTO>> findAllByIdRecetaConDetalles(@PathVariable Long idReceta) {
+        return ResponseEntity
+                .status(200)
+                .body(detalleRecetaService.findAllByIdRecetaConDetalles(idReceta));
+    }
+
+
     // Obtener un detalle específico por idDetalleReceta
-    @GetMapping("/detales/{idDetalleReceta}")
-    public ResponseEntity<DetalleRecetaResponseDTO> findByIdRecetasConDetalles(@PathVariable Long idDetalleReceta) {
+    @GetMapping("/detalles/{idDetalleReceta}")
+    public ResponseEntity<DetalleRecetaResponseDTO> findByIdRecetaConDetalles(@PathVariable Long idDetalleReceta) {
         return ResponseEntity
                 .status(200)
                 .body(detalleRecetaService.findByIdRecetasConDetalles(idDetalleReceta));

@@ -1,6 +1,8 @@
 package Recetas.msvc_Recetas.Services;
 
 import Recetas.msvc_Recetas.clients.DetalleRecetaClientRest;
+import Recetas.msvc_Recetas.dtos.DetalleRecetaResponseDTO;
+import Recetas.msvc_Recetas.dtos.RecetaResponseDTO;
 import Recetas.msvc_Recetas.dtos.UpdateNameRecetaRequestDTO;
 import Recetas.msvc_Recetas.exceptions.RecetaException;
 import Recetas.msvc_Recetas.models.entities.Receta;
@@ -36,8 +38,23 @@ public class RecetaServicesImp implements RecetaServices{
                 ()-> new RecetaException("La receta no existe")
         );
     }
-    //Con Detalles
 
+    //Con Detalles
+    @Transactional
+    @Override
+    public RecetaResponseDTO findByIdRecetasConDetalles(Long idReceta) {
+        Receta receta = recetaRepository.findById(idReceta).orElseThrow(
+                () -> new RecetaException("La receta con el id " + idReceta + " no existe")
+        );
+
+        List<DetalleRecetaResponseDTO> detalles = detalleRecetaClientRest.findAllByIdRecetaConDetalles(idReceta).getBody();
+
+        return new RecetaResponseDTO(
+                receta.getIdReceta(),
+                receta.getNombreReceta(),
+                detalles
+        );
+    }
 
 
     @Transactional
