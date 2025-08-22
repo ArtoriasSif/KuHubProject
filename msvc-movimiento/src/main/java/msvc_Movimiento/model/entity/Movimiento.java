@@ -27,6 +27,10 @@ public class Movimiento {
     private Long idInventario;
 
     @NotNull
+    @Column
+    private Long idProducto;
+
+    @NotNull
     @Column(name = "fecha_movimiento")
     private LocalDate fechaMovimiento;
 

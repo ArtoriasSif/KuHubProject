@@ -57,7 +57,7 @@ public class ProductoServiceImp implements ProductoService{
 
         //validar que no exista producto con ese nombre
         if (productoRepository.findByNombreProducto(capitalizado).isPresent()){
-            throw new ProductoException("Ya existe un producto con el nombre: " + capitalizado);
+            throw new ProductoException("Producto existente: " + capitalizado);
         }
 
         producto.setNombreProducto(capitalizado);
