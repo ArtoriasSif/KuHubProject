@@ -35,7 +35,6 @@ public class Usuario {
     @Column(name = "apellido_materno" )
     private String apellidoMaterno;
 
-    @NotBlank(message = "El apellido paterno no puede estar vacío")
     @Column(name = "apellido_paterno", nullable = false)
     private String apellidoPaterno;
 

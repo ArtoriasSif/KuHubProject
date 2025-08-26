@@ -10,4 +10,6 @@ public interface UsuarioServices {
     Usuario findByUsername (String username);
     List<Usuario> findAllUsuarios ();
     Usuario saveUsuario (Usuario usuario);
+    Usuario updateMailUsuario(Usuario usuario);
+    Usuario updateNombreUsuario(Usuario usuario);
 }

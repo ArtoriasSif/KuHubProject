@@ -47,6 +47,14 @@ public class UsuarioController {
                 .status(201)
                 .body(usuarioServices.saveUsuario(usuario));
     }
+    @PatchMapping("/mail")
+        public ResponseEntity<Usuario> updateMail(@RequestBody Usuario usuario){
+            return ResponseEntity.status(200).body(usuarioServices.updateMailUsuario(usuario));
+    }
+    @PatchMapping("/nombre")
+    public ResponseEntity<Usuario> updateNombre(@RequestBody Usuario usuario){
+        return ResponseEntity.status(200).body(usuarioServices.updateNombreUsuario(usuario));
+    }
 
 
 

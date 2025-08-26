@@ -42,4 +42,28 @@ public class UsuarioServicesImpl implements UsuarioServices{
 
         return usuarioRepository.save(usuario);
     }
+
+    //FALTA TESTEAR AMBOS UPDATE
+    public Usuario updateNombreUsuario(Usuario usuario){
+        Usuario usuarioModificableName = findByIdUsuario(usuario.getIdUsuario());
+        usuarioModificableName.setPrimeroNombre(usuario.getPrimeroNombre());
+        usuarioModificableName.setSegundoNombre(usuario.getSegundoNombre());
+        usuarioModificableName.setApellidoPaterno(usuario.getApellidoPaterno());
+        usuarioModificableName.setApellidoMaterno(usuario.getApellidoMaterno());
+
+        return usuarioRepository.save(usuarioModificableName);
+    }
+
+    public Usuario updateMailUsuario(Usuario usuario) {
+
+        Usuario usuarioModificable = findByIdUsuario(usuario.getIdUsuario());
+        usuarioModificable.setEmail(usuario.getEmail());
+
+        if (usuarioRepository.existsByEmail(usuario.getEmail())) {
+            throw new UsuarioException("Ya existe un usuario vinculado a este Email");
+        }
+        return usuarioRepository.save(usuarioModificable);
+
+    }
+
 }
