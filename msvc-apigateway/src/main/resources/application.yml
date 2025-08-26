@@ -54,6 +54,6 @@ spring:
             - Path=/api/v1/rol/**
 
         - id: msvc-movimiento-route
-          uri: http://localhost:8087
+          uri: http://localhost:8090
           predicates:
             - Path=/api/v1/movimiento/**

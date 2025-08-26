@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 //Porto du Phonk 8085
-@CrossOrigin(origins = "*")
 @RestController
 @Validated
 @RequestMapping("/api/v1/inventario")
