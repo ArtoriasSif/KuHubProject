@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 //porto de la aplicacion 8084
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/usuario")
 @Validated

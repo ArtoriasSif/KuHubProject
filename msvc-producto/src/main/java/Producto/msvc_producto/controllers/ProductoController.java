@@ -14,7 +14,6 @@ import java.util.List;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 //porto de la aplicacion 8081
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/producto")
 @Validated
