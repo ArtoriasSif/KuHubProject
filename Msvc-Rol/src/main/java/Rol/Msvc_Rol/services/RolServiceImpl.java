@@ -1,16 +1,15 @@
 package Rol.Msvc_Rol.services;
 
 import Rol.Msvc_Rol.dtos.RolUpdateNameResquest;
-import Rol.Msvc_Rol.exceptions.RolException;
+import Rol.Msvc_Rol.exceptions.RolExistenteException;
+import Rol.Msvc_Rol.exceptions.RolNotFoundException;
 import Rol.Msvc_Rol.models.Rol;
 import Rol.Msvc_Rol.repositories.RolRepository;
+import Rol.Msvc_Rol.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class RolServiceImpl implements  RolService{
@@ -22,8 +21,7 @@ public class RolServiceImpl implements  RolService{
     @Override
     public Rol findByIdRol(Long idRol) {
         return rolRepository.findById(idRol).orElseThrow(
-                ()-> new RolException("Rol con el id "+idRol+" no encontrado")
-        );
+                ()-> new RolNotFoundException(idRol));
     }
 
     @Transactional
@@ -36,13 +34,10 @@ public class RolServiceImpl implements  RolService{
     @Override
     public Rol saveRol(Rol rol) {
 
-        String nombre = rol.getNombreRol().trim();
-        String capitalizado = Arrays.stream(nombre.split("\\s+"))
-                .map(p -> p.substring(0, 1).toUpperCase() + p.substring(1).toLowerCase())
-                .collect(Collectors.joining(" "));
+        String capitalizado = StringUtils.capitalizarPalabras(rol.getNombreRol());
 
         if (rolRepository.findByNombreRol(capitalizado).isPresent()){
-            throw new RolException("Ya existe un rol con el nombre: " + capitalizado);
+            throw new RolExistenteException(capitalizado);
         }
         rol.setNombreRol(capitalizado);
         return rolRepository.save(rol);
@@ -50,23 +45,45 @@ public class RolServiceImpl implements  RolService{
 
     @Transactional
     @Override
-    public Rol updateNameRolById(Long idRol, RolUpdateNameResquest nameResquest ){
-        Rol rol = rolRepository.findById(idRol).orElseThrow(
-                ()-> new RolException("Rol con el id "+idRol+" no encontrado")
+    public Rol updateNameRolByName(String nombreRol, RolUpdateNameResquest nameResquest) {
+
+        Rol rol = rolRepository.findByNombreRol(nombreRol).orElseThrow(
+                () -> new RolNotFoundException(nombreRol)
         );
 
-        String nombre = nameResquest.getNombreRol().trim();
-        String capitalizado = Arrays.stream(nombre.split("\\s+"))
-                .map(p -> p.substring(0, 1).toUpperCase() + p.substring(1).toLowerCase())
-                .collect(Collectors.joining(" "));
+        String capitalizado = StringUtils.capitalizarPalabras(nameResquest.getNombreRol());
+        if (rolRepository.findByNombreRol(capitalizado).isPresent()) {
+            throw new RolExistenteException(capitalizado);
+        }
 
+        rol.setNombreRol(capitalizado);
+        return rolRepository.save(rol);
+    }
+
+
+    @Transactional
+    @Override
+    public Rol updateNameRolById(Long idRol, RolUpdateNameResquest nameResquest ){
+        Rol rol = rolRepository.findById(idRol).orElseThrow(
+                ()-> new RolNotFoundException(idRol));
+
+        String capitalizado = StringUtils.capitalizarPalabras(nameResquest.getNombreRol());
         if (rolRepository.findByNombreRol(capitalizado).isPresent()){
-            throw new RolException("Ya existe un rol con el nombre: " + capitalizado);
+            throw new RolExistenteException(capitalizado);
         }
         rol.setNombreRol(capitalizado);
         return rolRepository.save(rol);
     }
 
+    //METODO PELIGROSO, SI ELIMINA UN ROL PUEDE IMPEDIR ACESSO A INTERFACE
+    @Transactional
+    @Override
+    public void deleteByIdRol(Long idRol){
+        if (!rolRepository.existsById(idRol)) {
+            throw new RolNotFoundException(idRol);
+        }
+        rolRepository.deleteById(idRol);
+    }
 
 
 }

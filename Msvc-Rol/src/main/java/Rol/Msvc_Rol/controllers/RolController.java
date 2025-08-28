@@ -41,11 +41,27 @@ public class RolController {
     }
 
     @PutMapping("/{idRol}")
-    public ResponseEntity<Rol> updateNameRolById(@PathVariable Long idRol,
-                                                 @Validated @RequestBody RolUpdateNameResquest nameResquest){
+    public ResponseEntity<Rol> updateNameRolById
+            (@PathVariable Long idRol,
+             @Validated @RequestBody RolUpdateNameResquest nameResquest){
         return ResponseEntity
                 .status(200)
                 .body(rolService.updateNameRolById(idRol, nameResquest));
+    }
+
+    @PutMapping("/nombre/{nombreRol}")
+    public ResponseEntity<Rol> updateNameRolByName
+            (@PathVariable String nombreRol,
+             @Validated @RequestBody RolUpdateNameResquest nameResquest){
+        return ResponseEntity
+                .status(200)
+                .body(rolService.updateNameRolByName(nombreRol, nameResquest));
+    }
+
+    @DeleteMapping("/{idRol}")
+    public ResponseEntity<Void> deleteByIdRol(@PathVariable Long idRol){
+        rolService.deleteByIdRol(idRol);
+        return ResponseEntity.noContent().build();
     }
 
 
