@@ -1,11 +1,12 @@
-package Seccion.Msvc_Seccion.models;
+package Seccion.Msvc_Seccion.models.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,9 +36,8 @@ public class Seccion {
             name = "sesion_fechas",
             joinColumns = @JoinColumn(name = "id_seccion")
     )
-    @Column(name = "fecha",nullable = false)
-    @NotNull(message = "El campo fecha no puede ser vacio")
-    private List<LocalDate> fechas;
+    @Column(name = "fecha")
+    private List<LocalDateTime> fechas = new ArrayList<>();
 
     @Column(name="periodo",nullable = false)
     @NotBlank(message = "El campo periodo no puede ser vacio")
