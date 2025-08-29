@@ -1,6 +1,8 @@
 package Usuario.Msvc_Usuario.controllers;
 
-import Usuario.Msvc_Usuario.models.Usuario;
+import Usuario.Msvc_Usuario.dtos.UpdateIdSeccionesUsuarioByAdministratorRequestDTO;
+import Usuario.Msvc_Usuario.dtos.UpdateUsuarioByAdministratorRequestDTO;
+import Usuario.Msvc_Usuario.models.entity.Usuario;
 import Usuario.Msvc_Usuario.services.UsuarioServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -46,14 +48,40 @@ public class UsuarioController {
                 .status(201)
                 .body(usuarioServices.saveUsuario(usuario));
     }
-    @PatchMapping("/mail")
-        public ResponseEntity<Usuario> updateMail(@RequestBody Usuario usuario){
-            return ResponseEntity.status(200).body(usuarioServices.updateMailUsuario(usuario));
+
+    @PutMapping("/usuarioporadministrador/{idUsuario}")
+    public ResponseEntity<Usuario> updateUsuarioByAdministradorId
+        (@PathVariable Long idUsuario,
+         @Validated @RequestBody UpdateUsuarioByAdministratorRequestDTO requestDTO){
+        return ResponseEntity
+                .status(200)
+                .body(usuarioServices.updateUsuarioAdministrador(idUsuario, requestDTO));
     }
-    @PatchMapping("/nombre")
-    public ResponseEntity<Usuario> updateNombre(@RequestBody Usuario usuario){
-        return ResponseEntity.status(200).body(usuarioServices.updateNombreUsuario(usuario));
+
+    @PutMapping("/agregarsecciones/{idUsuario}")
+    public ResponseEntity<Usuario> addSeccionesToUsuarioById
+        (@PathVariable Long idUsuario,
+         @Validated @RequestBody UpdateIdSeccionesUsuarioByAdministratorRequestDTO requestDTO){
+        return ResponseEntity
+                .status(200)
+                .body(usuarioServices.UpdateAddIdSeccionesUsuarioByAdministrator(idUsuario, requestDTO));
     }
+
+    @PutMapping("/quitarsecciones/{idUsuario}")
+    public ResponseEntity<Usuario> removeSeccionesToUsuarioById
+         (@PathVariable Long idUsuario,
+          @Validated @RequestBody UpdateIdSeccionesUsuarioByAdministratorRequestDTO requestDTO){
+        return ResponseEntity
+                .status(200)
+                .body(usuarioServices.UpdateRemoveIdSeccionesUsuarioByAdministrator(idUsuario, requestDTO));
+    }
+
+
+
+    //Falta validar el ids existentes de rol usuario a parte del default
+    //Falta Acualizaccion por el mismo usuario.
+    //Falta el Delete que hay que pensar en la ideia de poner un estado inacticvo o offline.
+
 
 
 

@@ -182,6 +182,11 @@ public class SeccionServiceImpl implements SeccionService{
     }
 
     @Override
+    public boolean existeSeccionById(Long id){
+        return seccionRepository.existsById(id);
+    }
+
+    @Override
     public long count(){
         return seccionRepository.count();
     }

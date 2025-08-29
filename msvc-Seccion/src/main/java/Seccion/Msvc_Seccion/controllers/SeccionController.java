@@ -83,5 +83,11 @@ public class SeccionController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/existeSeccion/{idSeccion}")
+    public Boolean existeSeccionById(@PathVariable Long idSeccion){
+        return seccionService.existeSeccionById(idSeccion);
+    }
+
+
 
 }

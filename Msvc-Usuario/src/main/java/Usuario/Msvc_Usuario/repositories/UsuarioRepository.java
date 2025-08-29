@@ -1,6 +1,6 @@
 package Usuario.Msvc_Usuario.repositories;
 
-import Usuario.Msvc_Usuario.models.Usuario;
+import Usuario.Msvc_Usuario.models.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,10 +1,13 @@
-package Usuario.Msvc_Usuario.models;
+package Usuario.Msvc_Usuario.models.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="usuario")
@@ -21,12 +24,17 @@ public class Usuario {
     @Column(name = "id_usuario",nullable = false)
     private Long idUsuario;
 
-    //Este dato tiene que ser Null y posteriomente se asignara el rol, o determinar una ID defaut para ROl, sin permisos
+
     @Column(name = "id_rol")
     private Long idRol;
 
+    @ElementCollection
+    @CollectionTable(name = "usuario_secciones", joinColumns = @JoinColumn(name = "id_usuario"))
+    @Column(name = "id_seccion")
+    private List<Long> idSecciones = new ArrayList<>();
+
     @NotBlank(message = "El primer nombre no puede estar vacío")
-    @Column(name = "nombre_completo", nullable = false)
+    @Column(name = "primer_nombre", nullable = false)
     private String primeroNombre;
 
     @Column(name = "segundo_nombre")

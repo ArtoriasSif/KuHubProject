@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface RolRepository extends JpaRepository<Rol, Long> {
-    Optional<Object> findByNombreRol(String capitalizado);
+    Optional<Rol> findByNombreRol(String nombreRol);
 }

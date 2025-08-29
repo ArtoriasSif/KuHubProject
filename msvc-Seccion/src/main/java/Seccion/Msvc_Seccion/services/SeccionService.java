@@ -16,5 +16,6 @@ public interface SeccionService {
     Seccion updateSeccionRemoveDates (Long idSeccion, List<SeccionUpdateDatesRequestDTO> fechaRequest);
     void deleteByIdSeccion(Long id);
 
+    boolean existeSeccionById(Long id);
     long count();
 }
