@@ -2,6 +2,7 @@ package Usuario.Msvc_Usuario.controllers;
 
 import Usuario.Msvc_Usuario.dtos.UpdateIdSeccionesUsuarioByAdministratorRequestDTO;
 import Usuario.Msvc_Usuario.dtos.UpdateUsuarioByAdministratorRequestDTO;
+import Usuario.Msvc_Usuario.dtos.UpdateUsuarioByUsuarioRequestDTO;
 import Usuario.Msvc_Usuario.models.entity.Usuario;
 import Usuario.Msvc_Usuario.services.UsuarioServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,14 +77,36 @@ public class UsuarioController {
                 .body(usuarioServices.UpdateRemoveIdSeccionesUsuarioByAdministrator(idUsuario, requestDTO));
     }
 
+    @PutMapping("/usuario/{idUsuario}")
+    public ResponseEntity<Usuario> updateUsuarioByUsuarioWithId(
+            @PathVariable Long idUsuario,
+            @Validated @RequestBody UpdateUsuarioByUsuarioRequestDTO requestDTO){
+        return ResponseEntity
+                .status(200)
+                .body(usuarioServices.UpdateUsuarioByUsuarioWithId(idUsuario, requestDTO));
+    }
 
+    @PutMapping("/username/{username}")
+    public ResponseEntity<Usuario> updateUsernameByUsername(
+            @PathVariable String username,
+            @Validated @RequestBody UpdateUsuarioByUsuarioRequestDTO requestDTO){
+        return ResponseEntity
+                .status(200)
+                .body(usuarioServices.UpdateUsuarioByUsuarioWithUsername(username, requestDTO));
+    }
 
-    //Falta validar el ids existentes de rol usuario a parte del default
-    //Falta Acualizaccion por el mismo usuario.
     //Falta el Delete que hay que pensar en la ideia de poner un estado inacticvo o offline.
 
-
-
-
     //PARA DELETAR USUARIO HAY QUE VALIDAR QUE ESTE NO ESTE EN UNA SOLICITUD DE UN DOCENTE E INVENTARIO
+    @DeleteMapping("/{idUsuario}")
+    public ResponseEntity<Void> deleteUsuarioById(@PathVariable Long idUsuario){
+        if(usuarioServices.existsByIdUsuario(idUsuario)){
+            usuarioServices.deleteUsuarioById(idUsuario);
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
 }

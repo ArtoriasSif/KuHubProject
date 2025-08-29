@@ -12,4 +12,5 @@ public interface RolService {
     Rol updateNameRolById(Long idRol, RolUpdateNameResquest nameResquest);
     Rol updateNameRolByName(String nombreRol, RolUpdateNameResquest nameResquest);
     void deleteByIdRol(Long idRol);
+    boolean existeRolById(Long idRol);
 }

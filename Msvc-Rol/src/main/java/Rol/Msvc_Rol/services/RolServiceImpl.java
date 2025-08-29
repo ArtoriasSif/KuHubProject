@@ -30,6 +30,11 @@ public class RolServiceImpl implements  RolService{
         return rolRepository.findAll();
     }
 
+    @Override
+    public boolean existeRolById(Long idRol) {
+        return rolRepository.existsById(idRol);
+    }
+
     @Transactional
     @Override
     public Rol saveRol(Rol rol) {
@@ -84,6 +89,8 @@ public class RolServiceImpl implements  RolService{
         }
         rolRepository.deleteById(idRol);
     }
+
+
 
 
 }

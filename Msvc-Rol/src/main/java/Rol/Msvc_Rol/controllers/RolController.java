@@ -19,7 +19,7 @@ public class RolController {
     @Autowired
     private RolService rolService;
 
-    @GetMapping("{idRol}")
+    @GetMapping("/{idRol}")
     public ResponseEntity<Rol> findByIdRol (@PathVariable Long idRol){
         return ResponseEntity
                 .status(200)
@@ -31,6 +31,11 @@ public class RolController {
         return ResponseEntity
                 .status(200)
                 .body(rolService.findAllRoles());
+    }
+
+    @GetMapping("/existe/{idRol}")
+    public boolean existeRolById(@PathVariable Long idRol){
+        return rolService.existeRolById(idRol);
     }
 
     @PostMapping

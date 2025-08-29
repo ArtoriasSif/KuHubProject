@@ -16,4 +16,9 @@ public class UsuarioNotFoundException extends RuntimeException {
         super("No se encontró el usuario con el id: " + id, cause);
         this.idUsuario = id;
     }
+
+    public UsuarioNotFoundException(String Username, Long idUsuario) {
+        super("No se encontró el usuario con el nombre de usuario: " + Username);
+        this.idUsuario = idUsuario;
+    }
 }

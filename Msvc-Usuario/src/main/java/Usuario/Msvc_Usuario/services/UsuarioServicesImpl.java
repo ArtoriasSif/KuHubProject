@@ -1,8 +1,10 @@
 package Usuario.Msvc_Usuario.services;
 
+import Usuario.Msvc_Usuario.clients.RolClientRest;
 import Usuario.Msvc_Usuario.clients.SeccionClientRest;
 import Usuario.Msvc_Usuario.dtos.UpdateIdSeccionesUsuarioByAdministratorRequestDTO;
 import Usuario.Msvc_Usuario.dtos.UpdateUsuarioByAdministratorRequestDTO;
+import Usuario.Msvc_Usuario.dtos.UpdateUsuarioByUsuarioRequestDTO;
 import Usuario.Msvc_Usuario.exceptions.*;
 import Usuario.Msvc_Usuario.models.Seccion;
 import Usuario.Msvc_Usuario.models.entity.Usuario;
@@ -29,6 +31,9 @@ public class UsuarioServicesImpl implements UsuarioServices{
     @Autowired
     private SeccionClientRest seccionClientRest;
 
+    @Autowired
+    private RolClientRest rolClientRest;
+
     @Transactional
     @Override
     public Usuario findByIdUsuario (Long idUsuario){
@@ -43,6 +48,11 @@ public class UsuarioServicesImpl implements UsuarioServices{
         return usuarioRepository.findByUsername(username).orElseThrow(
                 () -> new UsuarioNotFoundByUsernameException(username)
         );
+    }
+
+    @Override
+    public boolean existsByIdUsuario(Long idUsuario) {
+        return usuarioRepository.existsById(idUsuario);
     }
 
     @Transactional
@@ -95,7 +105,12 @@ public class UsuarioServicesImpl implements UsuarioServices{
 
         if (usuario.getIdRol() == null) {
             usuario.setIdRol(1L); // asigna rol por defecto
+        }else{
+            if(!rolClientRest.existeRolById(usuario.getIdRol())){
+                usuario.setIdRol(1L); // Si no existe el rol, asigna rol por defecto
+            }
         }
+
 
         return usuarioRepository.save(usuario);
     }
@@ -118,7 +133,11 @@ public class UsuarioServicesImpl implements UsuarioServices{
 
         if (request.getIdRol() != null) {
             if(usuario.getIdRol() != request.getIdRol()){
-                usuario.setIdRol(request.getIdRol());
+                if(!rolClientRest.existeRolById(request.getIdRol())){
+                    usuario.setIdRol(1L); // Si no existe el rol, asigna rol por defecto
+                }else{
+                    usuario.setIdRol(request.getIdRol());
+                }
             }
         }
 
@@ -227,6 +246,57 @@ public class UsuarioServicesImpl implements UsuarioServices{
         return usuarioRepository.save(usuario);
     }
 
+    @Transactional
+    @Override
+    public Usuario UpdateUsuarioByUsuarioWithId
+            (Long idUsuario, UpdateUsuarioByUsuarioRequestDTO requestDTO) {
+
+        Usuario U =usuarioRepository.findById(idUsuario).orElseThrow(
+                () -> new UsuarioNotFoundException(idUsuario)
+        );
+
+        if(requestDTO.getUsername() != null){
+            if(!requestDTO.getUsername().equals(U.getUsername())){
+                U.setUsername(requestDTO.getUsername());
+            }
+        }
+        if(requestDTO.getPassword() != null){
+            if(!requestDTO.getPassword().equals(U.getPassword())){
+                U.setPassword(requestDTO.getPassword());
+            }
+        }
+
+        return usuarioRepository.save(U);
+    }
+
+    @Transactional
+    @Override
+    public Usuario UpdateUsuarioByUsuarioWithUsername(
+            String userName, UpdateUsuarioByUsuarioRequestDTO requestDTO){
+
+        Usuario U = usuarioRepository.findByUsername(userName).orElseThrow(
+                () -> new UsuarioNotFoundByUsernameException(userName)
+        );
+
+        if(requestDTO.getUsername() != null){
+            if(!requestDTO.getUsername().equals(U.getUsername())){
+                U.setUsername(requestDTO.getUsername());
+            }
+        }
+        if(requestDTO.getPassword() != null){
+            if(!requestDTO.getPassword().equals(U.getPassword())){
+                U.setPassword(requestDTO.getPassword());
+            }
+        }
+
+        return usuarioRepository.save(U);
+    }
+
+    @Transactional
+    @Override
+    public void deleteUsuarioById(Long idUsuario) {
+        usuarioRepository.deleteById(idUsuario);
+    }
 
 
 

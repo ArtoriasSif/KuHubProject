@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "msvc-Seccion", url = "http://localhost:8091/api/v1/seccion")
+@FeignClient(name = "msvc-Rol", url = "http://localhost:8091/api/v1/rol")
 public interface SeccionClientRest {
 
     @GetMapping("/{id}")
