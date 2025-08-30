@@ -70,6 +70,11 @@ public class DetalleRecetaController {
         return ResponseEntity.ok(existe);
     }
 
+    @GetMapping("/existeProducto/{idProducto}")
+    public boolean existsByIdProducto(@PathVariable Long idProducto) {
+        return detalleRecetaService.existProductoInDetalleReceta(idProducto);
+    }
+
     @PostMapping
     public ResponseEntity<DetalleReceta> saveDetalleReceta (@Validated @RequestBody DetalleReceta detalleReceta){
         return ResponseEntity

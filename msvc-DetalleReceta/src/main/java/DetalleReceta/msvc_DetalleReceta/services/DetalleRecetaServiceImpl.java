@@ -83,6 +83,11 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
         return responseDTOs;
     }
 
+    @Override
+    public boolean existProductoInDetalleReceta(Long idProducto){
+        return detalleRecetaRepository.existsByIdProducto(idProducto);
+    }
+
     //Lista todos detalles de una id recete con detalles DTO
     @Transactional
     @Override

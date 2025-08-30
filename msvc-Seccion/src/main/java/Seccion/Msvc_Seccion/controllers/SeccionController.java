@@ -42,7 +42,7 @@ public class SeccionController {
     }
 
     @PutMapping("/nombreporid/{idSeccion}")
-    public ResponseEntity<Seccion> updateSeccionByName(
+    public ResponseEntity<Seccion> updateNameSeccionById(
             @PathVariable Long idSeccion,
             @Validated @RequestBody SeccionNameRequestDTO request){
         return ResponseEntity
@@ -51,7 +51,7 @@ public class SeccionController {
     }
 
     @PutMapping("/nombre/{nombreSeccion}")
-    public ResponseEntity<Seccion> updateSeccionByName(
+    public ResponseEntity<Seccion> updateNameSeccionByName(
             @PathVariable String nombreSeccion,
             @Validated @RequestBody SeccionNameRequestDTO request){
         return ResponseEntity
@@ -60,7 +60,7 @@ public class SeccionController {
     }
 
     @PutMapping("/agregarfechas/{idSeccion}")
-    public ResponseEntity<Seccion> updateSeccionAddFecha(
+    public ResponseEntity<Seccion> updateSeccionAddDates(
             @PathVariable Long idSeccion,
             @Validated @RequestBody List<SeccionUpdateDatesRequestDTO> request){
         return ResponseEntity

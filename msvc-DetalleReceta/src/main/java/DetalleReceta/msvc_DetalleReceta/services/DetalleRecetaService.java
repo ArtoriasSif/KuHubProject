@@ -18,4 +18,5 @@ public interface DetalleRecetaService {
     void deletarTodoByIdReceta (Long idReceta);
     void deleteByidDetalleReceta(Long idDetalleReceta);
     boolean existsByIdReceta(Long idReceta);
+    boolean existProductoInDetalleReceta(Long idProducto);
 }

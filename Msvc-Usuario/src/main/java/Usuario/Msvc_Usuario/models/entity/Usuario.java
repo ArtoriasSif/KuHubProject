@@ -24,7 +24,6 @@ public class Usuario {
     @Column(name = "id_usuario",nullable = false)
     private Long idUsuario;
 
-
     @Column(name = "id_rol")
     private Long idRol;
 

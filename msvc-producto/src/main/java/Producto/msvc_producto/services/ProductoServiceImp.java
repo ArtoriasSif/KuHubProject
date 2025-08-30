@@ -1,10 +1,15 @@
 package Producto.msvc_producto.services;
 
 import Producto.msvc_producto.clients.DetalleProductoSolicitudClientRest;
+import Producto.msvc_producto.clients.DetalleRecetaClientRest;
 import Producto.msvc_producto.dtos.ProductoUpdateRequest;
 import Producto.msvc_producto.exceptions.ProductoException;
+import Producto.msvc_producto.exceptions.ProductoExistenteException;
+import Producto.msvc_producto.exceptions.ProductoNotFoundException;
+import Producto.msvc_producto.exceptions.ProductoVinculadoException;
 import Producto.msvc_producto.models.entity.Producto;
 import Producto.msvc_producto.repositories.ProductoRepository;
+import Producto.msvc_producto.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -24,6 +29,9 @@ public class ProductoServiceImp implements ProductoService{
     @Autowired
     private DetalleProductoSolicitudClientRest detalleProductoSolicitudClientRest;
 
+    @Autowired
+    private DetalleRecetaClientRest detalleRecetaClientRest;
+
     @Transactional
     @Override
     public List<Producto> findAll() {
@@ -34,7 +42,7 @@ public class ProductoServiceImp implements ProductoService{
     @Override
     public Producto findByNombreProducto(String nombre){
         return productoRepository.findByNombreProducto(nombre).orElseThrow(
-                ()-> new ProductoException("Producto con el nombre "+nombre+" no encontrado")
+                ()-> new ProductoNotFoundException(nombre)
         );
     }
 
@@ -42,7 +50,7 @@ public class ProductoServiceImp implements ProductoService{
     @Override
     public Producto findById(Long id){
         return productoRepository.findById(id).orElseThrow(
-                ()-> new ProductoException("Producto con el id "+id+" no encontrado")
+                ()-> new ProductoNotFoundException(id)
         );
     }
 
@@ -50,14 +58,12 @@ public class ProductoServiceImp implements ProductoService{
     @Override
     public Producto save (Producto producto) {
 
-        String nombre = producto.getNombreProducto().trim();
-        String capitalizado = Arrays.stream(nombre.split("\\s+"))
-                .map(p -> p.substring(0, 1).toUpperCase() + p.substring(1).toLowerCase())
-                .collect(Collectors.joining(" "));
+
+        String capitalizado = StringUtils.capitalizarPalabras(producto.getNombreProducto());
 
         //validar que no exista producto con ese nombre
         if (productoRepository.findByNombreProducto(capitalizado).isPresent()){
-            throw new ProductoException("Producto existente: " + capitalizado);
+            throw new ProductoExistenteException(capitalizado);
         }
 
         producto.setNombreProducto(capitalizado);
@@ -68,16 +74,19 @@ public class ProductoServiceImp implements ProductoService{
     @Override
     public Producto updateByName(String nombreProductoActual , ProductoUpdateRequest productoRequest) {
 
-        Producto P = productoRepository.findByNombreProducto(nombreProductoActual).orElseThrow(
-                ()-> new ProductoException("Producto con el nombre "+nombreProductoActual+" no encontrado")
+        String nombrePActual = StringUtils.capitalizarPalabras(nombreProductoActual);
+        String nombrePNuevo = StringUtils.capitalizarPalabras(productoRequest.getNombreProductoNuevo());
+
+        Producto P = productoRepository.findByNombreProducto(nombrePActual).orElseThrow(
+                ()-> new ProductoNotFoundException(nombrePActual)
         );
 
-        if (!nombreProductoActual.equals(productoRequest.getNombreProductoNuevo()) &&
-                productoRepository.existsByNombreProducto(productoRequest.getNombreProductoNuevo())) {
-            throw new ProductoException("Ya existe un producto con el nombre: " + productoRequest.getNombreProductoNuevo());
+        if (!nombrePActual.equals(nombrePNuevo) &&
+                productoRepository.existsByNombreProducto(nombrePNuevo)) {
+            throw new ProductoExistenteException(nombrePNuevo);
         }
 
-        P.setNombreProducto(productoRequest.getNombreProductoNuevo());
+        P.setNombreProducto(nombrePNuevo);
         P.setUnidadMedida(productoRequest.getUnidadMedida());
         return productoRepository.save(P);
     }
@@ -87,14 +96,16 @@ public class ProductoServiceImp implements ProductoService{
     public Producto updateById(Long id, ProductoUpdateRequest productoRequest){
 
         Producto P = productoRepository.findById(id).orElseThrow(() ->
-                new ProductoException("Producto con el id "+id+" no encontrado"));
+                new ProductoNotFoundException(id));
 
-        if (!P.getNombreProducto().equals(productoRequest.getNombreProductoNuevo()) &&
-                productoRepository.existsByNombreProducto(productoRequest.getNombreProductoNuevo())) {
-            throw new ProductoException("Ya existe un producto con el nombre: " + productoRequest.getNombreProductoNuevo());
+        String nombrePNuevo = StringUtils.capitalizarPalabras(productoRequest.getNombreProductoNuevo());
+
+        if (!P.getNombreProducto().equals(nombrePNuevo) &&
+                productoRepository.existsByNombreProducto(nombrePNuevo)) {
+            throw new ProductoExistenteException(nombrePNuevo);
         }
 
-        P.setNombreProducto(productoRequest.getNombreProductoNuevo());
+        P.setNombreProducto(nombrePNuevo);
         P.setUnidadMedida(productoRequest.getUnidadMedida());
         return productoRepository.save(P);
     }
@@ -102,45 +113,39 @@ public class ProductoServiceImp implements ProductoService{
     // Metodo accedido por Client para verificar si existe producto vinculado al detalle
     @Transactional
     @Override
-    public void deleteByName(String nombreProducto) throws ProductoException {
-        Producto producto = findByNombreProducto(nombreProducto);
-        if (producto == null) {
-            throw new ProductoException("Producto no encontrado: " + nombreProducto);
-        }
+    public void deleteByName(String nombreProducto) {
 
-        Boolean tieneSolicitud;
-        try {
-            tieneSolicitud = detalleProductoSolicitudClientRest.existeProductoEnDetalle(nombreProducto);
-        } catch (Exception e) {
-            throw new ProductoException("Error al verificar solicitudes asociadas al producto: " + e.getMessage());
-        }
+        String nombreProductoCapitalizado = StringUtils.capitalizarPalabras(nombreProducto);
 
-        if (Boolean.TRUE.equals(tieneSolicitud)) {
-            throw new ProductoException("No se puede eliminar un producto con solicitud de docente asociada");
-        }
+        Producto producto = productoRepository.findByNombreProducto(nombreProductoCapitalizado).orElseThrow(
+                ()-> new ProductoNotFoundException(nombreProductoCapitalizado)
+        );
 
-        productoRepository.delete(producto);
+        boolean enDetalleSolicitud = detalleProductoSolicitudClientRest.existeProductoIdEnDetalle(producto.getIdProducto());
+        boolean enDetalleReceta = detalleRecetaClientRest.existsByIdProducto(producto.getIdProducto());
+
+        if (!enDetalleSolicitud && !enDetalleReceta) {
+            productoRepository.delete(producto);
+        } else {
+            throw new ProductoVinculadoException(nombreProductoCapitalizado);
+        }
     }
 
     @Transactional
     @Override
-    public void deleteById(Long id) throws ProductoException {
-        if (!productoRepository.existsById(id)) {
-            throw new ProductoException("Producto con ID " + id + " no existe");
-        }
+    public void deleteById(Long id)  {
+        Producto producto = productoRepository.findById(id).orElseThrow(
+                () -> new ProductoNotFoundException(id));
 
-        Boolean tieneSolicitud;
-        try {
-            tieneSolicitud = detalleProductoSolicitudClientRest.existeProductoIdEnDetalle(id);
-        } catch (Exception e) {
-            throw new ProductoException("Error al verificar solicitudes asociadas al producto con ID " + id);
-        }
 
-        if (Boolean.TRUE.equals(tieneSolicitud)) {
-            throw new ProductoException("No se puede eliminar un producto con solicitud de docente asociada");
-        }
+        boolean enDetalleSolicitud = detalleProductoSolicitudClientRest.existeProductoIdEnDetalle(producto.getIdProducto());
+        boolean enDetalleReceta = detalleRecetaClientRest.existsByIdProducto(producto.getIdProducto());
 
-        productoRepository.deleteById(id);
+        if (!enDetalleSolicitud && !enDetalleReceta) {
+            productoRepository.delete(producto);
+        } else {
+            throw new ProductoVinculadoException(producto.getNombreProducto());
+        }
     }
 
     @Override
