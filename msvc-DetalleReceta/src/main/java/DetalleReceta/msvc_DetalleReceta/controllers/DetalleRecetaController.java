@@ -24,10 +24,10 @@ public class DetalleRecetaController {
 
     //Listar sin detalles
     @GetMapping("/{id}")
-    public ResponseEntity<DetalleReceta> findByIdDetalleReceta(@PathVariable Long idDetalleReceta){
+    public ResponseEntity<DetalleReceta> findByIdDetalleReceta(@PathVariable Long id){
         return ResponseEntity
                 .status(200)
-                .body(detalleRecetaService.findByIdDetalleReceta(idDetalleReceta));
+                .body(detalleRecetaService.findByIdDetalleReceta(id));
     }
 
     @GetMapping

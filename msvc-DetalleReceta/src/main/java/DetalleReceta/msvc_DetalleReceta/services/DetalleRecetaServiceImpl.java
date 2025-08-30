@@ -6,6 +6,9 @@ import DetalleReceta.msvc_DetalleReceta.clients.RecetaClientRest;
 import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaIUpdateQuantityRequestDTO;
 import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaResponseDTO;
 import DetalleReceta.msvc_DetalleReceta.exceptions.DetalleRecetaException;
+import DetalleReceta.msvc_DetalleReceta.exceptions.DetalleRecetaNotFoundException;
+import DetalleReceta.msvc_DetalleReceta.exceptions.ProductoClientException;
+import DetalleReceta.msvc_DetalleReceta.exceptions.RecetaNotFoundException;
 import DetalleReceta.msvc_DetalleReceta.models.entities.DetalleReceta;
 import DetalleReceta.msvc_DetalleReceta.models.Producto;
 import DetalleReceta.msvc_DetalleReceta.models.Receta;
@@ -35,8 +38,7 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
     @Override
     public DetalleReceta findByIdDetalleReceta(Long idDetalleReceta){
         return detalleRecetaRepository.findById(idDetalleReceta).orElseThrow(
-                () -> new RuntimeException("Detalle Receta con id: "+idDetalleReceta+" no encontrado")
-        );
+                () -> new DetalleRecetaNotFoundException(idDetalleReceta));
     }
 
     @Transactional
@@ -63,11 +65,11 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
                 try {
                     Producto producto = productoClientRest.findProductoById(id).getBody();
                     if (producto == null) {
-                        throw new DetalleRecetaException("Producto con id " + id + " no encontrado");
+                        throw new DetalleRecetaException(id);
                     }
                     return producto;
                 } catch (Exception e) {
-                    throw new DetalleRecetaException("Error al consultar producto con id " + id + ": " + e.getMessage());
+                    throw new ProductoClientException(id, e);
                 }
             });
 
@@ -93,7 +95,7 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
     @Override
     public List<DetalleRecetaResponseDTO> findAllByIdRecetaConDetalles(Long idReceta) {
         if(!detalleRecetaRepository.existsByIdReceta(idReceta)){
-            throw new DetalleRecetaException("La receta con id "+idReceta+" no existe");
+            throw new DetalleRecetaNotFoundException(idReceta);
         }
         List<DetalleReceta> detalleReceta = detalleRecetaRepository.findAllByIdReceta(idReceta);
         List<DetalleRecetaResponseDTO> responseDTOs = new ArrayList<>();
@@ -119,14 +121,13 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
     @Override
     public DetalleRecetaResponseDTO findByIdRecetasConDetalles(Long idDetalleReceta) {
         DetalleReceta detalle = detalleRecetaRepository.findById(idDetalleReceta)
-                .orElseThrow(() -> new DetalleRecetaException(
-                        "El detalle de receta con id " + idDetalleReceta + " no existe"));
+                .orElseThrow(() ->new DetalleRecetaNotFoundException(idDetalleReceta));
 
         Producto producto;
         try {
             producto = productoClientRest.findProductoById(detalle.getIdProducto()).getBody();
         } catch (Exception e) {
-            throw new DetalleRecetaException("Producto con id " + detalle.getIdProducto() + " no encontrado");
+            throw new ProductoClientException(detalle.getIdProducto(), e);
         }
         assert producto != null;
         return new DetalleRecetaResponseDTO(
@@ -159,11 +160,11 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
         try{
             Producto producto = productoClientRest.findProductoById(detalleReceta.getIdProducto()).getBody();
         }catch (Exception e){
-            throw new DetalleRecetaException("Producto no encontrado");
+            throw new ProductoClientException("Producto no encontrado");
         }
 
         if (detalleReceta.getCantidadUnidadMedida() <= 0){
-            throw new RuntimeException("La cantidad de unidad medida no puede ser menor a 0");
+            throw new DetalleRecetaException("La cantidad de unidad medida no puede ser menor a 0");
         }
 
 
@@ -175,8 +176,7 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
     public DetalleReceta detalleRecetaUpdateQuantity(Long id, DetalleRecetaIUpdateQuantityRequestDTO quantityRequest){
 
         DetalleReceta detalleReceta = detalleRecetaRepository.findById(id).orElseThrow(
-                ()-> new DetalleRecetaException("Detalle de receta con el id "+id+" no encontrado")
-        );
+                ()-> new DetalleRecetaNotFoundException(id));
 
         if (quantityRequest.getCantidadUnidadMedida() == null || quantityRequest.getCantidadUnidadMedida() <= 0) {
             throw new DetalleRecetaException("La cantidad debe ser un número positivo");
@@ -191,7 +191,7 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
     public void deletarTodoByIdReceta (Long idReceta){
         // Verificar si la receta existe en la BD
         if (!detalleRecetaRepository.existsById(idReceta)) {
-            throw new DetalleRecetaException("La receta con id " + idReceta + " no existe.");
+            throw new RecetaNotFoundException(idReceta);
         }
 
         // Verificar si tiene detalles
