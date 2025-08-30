@@ -4,6 +4,7 @@ import Producto.msvc_producto.dtos.ProductoUpdateRequest;
 import Producto.msvc_producto.exceptions.ProductoException;
 import Producto.msvc_producto.models.entity.Producto;
 import Producto.msvc_producto.services.ProductoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 //porto de la aplicacion 8081
 @RestController
@@ -46,7 +46,7 @@ public class ProductoController {
     }
 
     @PostMapping
-    public ResponseEntity<Producto> createProducto(@Validated @RequestBody Producto producto){
+    public ResponseEntity<Producto> createProducto(@Valid @RequestBody Producto producto){
         return ResponseEntity
                 .status(201)
                 .body(productoService.save(producto));
@@ -96,7 +96,8 @@ public class ProductoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado: " + e.getMessage());
         }
     }
-    //Crear metodo al futuro para deletar en cascada, por gestor ADMIN
+    //Crear metodo al futuro para deletar en cascada, por gestor ADMIN borrando detalles de todos los productos en DetalleReceta y DetalleProducto
+
 
 
     //Lo quiero para Checkear en el Inventario que existe el producto
