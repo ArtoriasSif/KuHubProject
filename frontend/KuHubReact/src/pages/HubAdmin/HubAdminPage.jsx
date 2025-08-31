@@ -26,7 +26,7 @@ function HubAdminPage() {
           <Link to="/docente/solicitud" className={styles.menuButton}>
             Solicitud de Materias Primas
           </Link>
-          <Link to="/admin/ramos" className={styles.menuButton}>
+          <Link to="/admin/asignaturas" className={styles.menuButton}>
             Administrar Asignaturas y Secciones
           </Link>
           <Link to="/admin/inventario" className={styles.menuButton}>
