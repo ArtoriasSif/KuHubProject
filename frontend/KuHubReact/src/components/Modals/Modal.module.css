@@ -1,0 +1,60 @@
+/* src/components/Modals/Modal.module.css */
+.modalOverlay {
+    display: flex;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+}
+.modalContent {
+    background-color: var(--color-content-bg);
+    padding: 20px;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--box-shadow-medium);
+    width: 90%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border-color-on-light);
+    padding-bottom: 10px;
+}
+.closeButton {
+    color: var(--color-text-on-light-bg);
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Añade esto en src/components/Modals/Modal.module.css */
+.tabContainer {
+    display: flex;
+    border-bottom: 1px solid var(--border-color-on-light);
+    margin-bottom: 15px;
+}
+
+.tabContainer button {
+    padding: 10px 15px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--color-placeholder);
+    border-bottom: 3px solid transparent;
+}
+
+.tabContainer button.activeTab {
+    color: var(--color-duoc-gold);
+    border-bottom: 3px solid var(--color-duoc-gold);
+}

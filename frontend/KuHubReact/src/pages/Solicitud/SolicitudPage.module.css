@@ -1,0 +1,59 @@
+/* src/pages/Solicitud/SolicitudPage.module.css */
+
+#solicitudContainer {
+    max-width: 900px; /* Un poco más de espacio para esta vista compleja */
+}
+
+.datosTotales {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.colIzquierda {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 2; /* Más espacio para la columna izquierda */
+    min-width: 300px;
+}
+
+.colDerecha {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
+    min-width: 150px;
+}
+
+.pedidoForm {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.pedidoActual ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.pedidoActual li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid var(--border-color-on-light);
+}
+
+.btnQuitar {
+    background-color: #fce8e6;
+    color: #a50e0e;
+    border: 1px solid #a50e0e;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
