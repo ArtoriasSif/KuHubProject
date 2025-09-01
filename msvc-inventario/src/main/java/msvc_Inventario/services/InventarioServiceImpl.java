@@ -165,6 +165,7 @@ public class InventarioServiceImpl implements InventarioService {
         if (producto != null) {
             dto.setNombreProducto(producto.getNombreProducto());
             dto.setUnidadMedida(producto.getUnidadMedida());
+            dto.setCategoria(producto.getCategoria());
         }
         return dto;
     }

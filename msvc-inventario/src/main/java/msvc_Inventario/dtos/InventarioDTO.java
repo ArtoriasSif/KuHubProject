@@ -2,6 +2,7 @@ package msvc_Inventario.dtos;
 
 
 import lombok.*;
+import msvc_Inventario.models.Categoria;
 
 @Getter
 @Setter
@@ -17,6 +18,7 @@ public class InventarioDTO {
     private Float totalInventario;
     private Float inicialInventario;
     private Float devolucionInventario;
+    private Categoria categoria;
 
 
 }
