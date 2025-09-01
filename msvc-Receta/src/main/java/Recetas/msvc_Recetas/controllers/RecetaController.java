@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/receta")
 @Validated
-public class RecetaController {
+public class    RecetaController {
 
     @Autowired
     private RecetaServices recetaServices  ;

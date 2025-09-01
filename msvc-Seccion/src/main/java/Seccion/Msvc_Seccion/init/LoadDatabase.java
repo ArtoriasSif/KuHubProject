@@ -33,25 +33,44 @@ public class LoadDatabase implements CommandLineRunner {
 
         if (seccionService.count() == 0) {
             Set<String> nombresGenerados = new HashSet<>();
+            Random random = new Random();
 
-            for (int i = 1; i <= 10; i++) { // Crear 10 secciones de ejemplo
-                String nombre = "Seccion " + (char) ('A' + i - 1);
+            int totalSecciones = 200;
+            int totalAsignaturas = 50;
 
-                if (nombresGenerados.contains(nombre)) continue;
+            for (int idAsignatura = 1; idAsignatura <= totalAsignaturas; idAsignatura++) {
+                String nombre = "Sección " + idAsignatura;
 
                 Seccion seccion = new Seccion();
                 seccion.setNombreSeccion(nombre);
-                seccion.setIdAsignatura((long) i); // Suponiendo que ya existen asignaturas con id 1..10
+                seccion.setIdAsignatura((long) idAsignatura);
                 seccion.setPeriodo(faker.options().option("Diurno", "Vespertino"));
                 seccion.setFechas(generarFechasEjemplo());
 
-                seccion = seccionService.saveSeccion(seccion);
-                log.info("Seccion creada: {}", seccion);
-
+                seccionService.saveSeccion(seccion);
                 nombresGenerados.add(nombre);
+
+                log.info("Sección creada para asignatura fija: {}", seccion);
             }
 
-            log.info("✅ Se crearon {} secciones de prueba", nombresGenerados.size());
+            for (int i = totalAsignaturas + 1; i <= totalSecciones; i++) {
+                String nombre = "Sección " + i;
+
+                Long idAsignatura = (long) (random.nextInt(totalAsignaturas) + 1);
+
+                Seccion seccion = new Seccion();
+                seccion.setNombreSeccion(nombre);
+                seccion.setIdAsignatura(idAsignatura);
+                seccion.setPeriodo(faker.options().option("Diurno", "Vespertino"));
+                seccion.setFechas(generarFechasEjemplo());
+
+                seccionService.saveSeccion(seccion);
+                nombresGenerados.add(nombre);
+
+                log.info("Sección creada aleatoria: {}", seccion);
+            }
+
+            log.info("✅ Se crearon {} secciones de prueba distribuidas en {} asignaturas", nombresGenerados.size(), totalAsignaturas);
         } else {
             log.info("⚠ Ya existen secciones, no se insertó ninguna nueva");
         }
