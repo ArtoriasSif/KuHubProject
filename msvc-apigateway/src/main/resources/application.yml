@@ -11,7 +11,7 @@ spring:
           uri: http://localhost:8089
           predicates:
             - Path=/api/v1/asignatura/**
-            -
+
         - id: msvc-seccion-route
           uri: http://localhost:8091
           predicates:
