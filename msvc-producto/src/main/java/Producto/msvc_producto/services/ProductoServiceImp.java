@@ -7,6 +7,7 @@ import Producto.msvc_producto.exceptions.ProductoException;
 import Producto.msvc_producto.exceptions.ProductoExistenteException;
 import Producto.msvc_producto.exceptions.ProductoNotFoundException;
 import Producto.msvc_producto.exceptions.ProductoVinculadoException;
+import Producto.msvc_producto.models.entity.Categoria;
 import Producto.msvc_producto.models.entity.Producto;
 import Producto.msvc_producto.repositories.ProductoRepository;
 import Producto.msvc_producto.utils.StringUtils;
@@ -153,4 +154,26 @@ public class ProductoServiceImp implements ProductoService{
     public List<Producto> findByIds(List<Long> ids) {
         return productoRepository.findAllById(ids);
     }
+
+    @Override
+    public Categoria findCategoriaByIdProducto(Long idProducto) {
+        Producto producto = productoRepository.findById(idProducto).orElseThrow(
+                () -> new ProductoNotFoundException(idProducto)
+        );
+        return producto.getCategoria();
+    }
+
+    @Override
+    public Categoria findCategoriaByNombreProducto(String nombreProducto) {
+        Producto producto = productoRepository.findByNombreProducto(nombreProducto).orElseThrow(
+                () -> new ProductoNotFoundException(nombreProducto)
+        );
+        return producto.getCategoria();
+    }
+
+    @Override
+    public List<Producto> findByCategoriaIdCategoria(Long idCategoria) {
+        return this.productoRepository.findByCategoriaIdCategoria(idCategoria);
+    }
+
 }

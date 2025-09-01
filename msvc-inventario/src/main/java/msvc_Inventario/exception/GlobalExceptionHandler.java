@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InventarioException.class)
     public ResponseEntity<ErrorDTO> handleInventarioException(InventarioException exception){
 
-        if(exception.getMessage().contains("no se encuentra en la base de datos")) {
+        if(exception.getMessage().contains("No se encontró")) {
             // Esto nos sirve para cuando no existe en la base de datos el Inventario
             Map<String, String> errorMap = Collections.singletonMap("Inventario no encontrado", exception.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
