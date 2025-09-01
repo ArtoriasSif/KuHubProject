@@ -1,6 +1,7 @@
 package msvc_Inventario.dtos;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import msvc_Inventario.models.Categoria;
 
@@ -16,7 +17,9 @@ public class InventarioDTO {
     private String unidadMedida;
     private String ubicacionInventario;
     private Float totalInventario;
+    @JsonIgnore
     private Float inicialInventario;
+    @JsonIgnore
     private Float devolucionInventario;
     private Categoria categoria;
 

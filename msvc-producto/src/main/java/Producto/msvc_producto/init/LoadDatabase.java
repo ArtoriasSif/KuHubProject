@@ -36,12 +36,14 @@ import java.util.*;
             /* NUllPointerException, ayuda a protejernos de ese error.
                 Activar cuando el Prototipo esté funcional
                 y carguemos productos desde el Excel
+            */
+
 
             String nombreCategoriaCero = "Sin Categoria";
             if(this.categoriaRepository.findByNombreCategoria(nombreCategoriaCero.toLowerCase().trim()).isEmpty()) {
-                Categoria sinCategoria = new Categoria(nombreCategoriaCero);
+                this.categoriaRepository.save(new Categoria(nombreCategoriaCero));
             }
-            */
+
 
             if (productoRepository.count() == 0) {
                 Set<String> nombresGenerados = new HashSet<>();
@@ -56,7 +58,7 @@ import java.util.*;
                 categorias.add(new Categoria("Utencilios"));
                 categorias.add(new Categoria("Vino y Destilados"));
 
-                List<Categoria> categoriasGuardadas = categoriaRepository.saveAll(categorias);
+                this.categoriaRepository.saveAll(categorias);
 
                 for (int i = 0; i < 100; ) {
                     String nombre = faker.commerce().productName();
