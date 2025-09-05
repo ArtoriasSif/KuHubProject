@@ -14,4 +14,6 @@ public interface RolClientRest {
 
     @GetMapping("/existe/{idRol}")
     boolean existeRolById(@PathVariable Long idRol);
+
+
 }

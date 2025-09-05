@@ -1,6 +1,7 @@
 package Rol.Msvc_Rol.controllers;
 
 import Rol.Msvc_Rol.dtos.RolNameRequestDTO;
+import Rol.Msvc_Rol.models.RolNombre;
 import Rol.Msvc_Rol.models.entity.Rol;
 import Rol.Msvc_Rol.services.RolService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class RolController {
     public boolean existeRolById(@PathVariable Long idRol){
         return rolService.existeRolById(idRol);
     }
+
+
+
 
     @PostMapping
     public ResponseEntity<Rol> createRol(@Validated @RequestBody RolNameRequestDTO requestDTO){

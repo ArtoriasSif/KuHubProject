@@ -7,7 +7,7 @@ import Usuario.Msvc_Usuario.models.entity.Usuario;
 
 import java.util.List;
 
-public interface UsuarioServices {
+public interface UsuarioService {
 
     Usuario findByIdUsuario (Long idUsuario);
     Usuario findByUsername (String username);

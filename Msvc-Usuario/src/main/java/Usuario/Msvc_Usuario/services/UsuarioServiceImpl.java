@@ -12,7 +12,6 @@ import Usuario.Msvc_Usuario.repositories.UsuarioRepository;
 import Usuario.Msvc_Usuario.utils.StringUtils;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class UsuarioServicesImpl implements UsuarioServices{
+public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -34,7 +33,7 @@ public class UsuarioServicesImpl implements UsuarioServices{
     @Autowired
     private RolClientRest rolClientRest;
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public Usuario findByIdUsuario (Long idUsuario){
         return usuarioRepository.findById(idUsuario).orElseThrow(
@@ -42,7 +41,7 @@ public class UsuarioServicesImpl implements UsuarioServices{
         );
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public Usuario findByUsername (String username){
         return usuarioRepository.findByUsername(username).orElseThrow(

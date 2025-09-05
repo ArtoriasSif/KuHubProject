@@ -4,7 +4,7 @@ import Usuario.Msvc_Usuario.dtos.UpdateIdSeccionesUsuarioByAdministratorRequestD
 import Usuario.Msvc_Usuario.dtos.UpdateUsuarioByAdministratorRequestDTO;
 import Usuario.Msvc_Usuario.dtos.UpdateUsuarioByUsuarioRequestDTO;
 import Usuario.Msvc_Usuario.models.entity.Usuario;
-import Usuario.Msvc_Usuario.services.UsuarioServices;
+import Usuario.Msvc_Usuario.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,34 +20,34 @@ import java.util.List;
 public class UsuarioController {
 
     @Autowired
-    private UsuarioServices usuarioServices;
+    private UsuarioService usuarioService;
 
     @GetMapping("/id/{idUsuario}")
     public ResponseEntity<Usuario> findByIdUsuario (@PathVariable Long idUsuario){
         return ResponseEntity
                 .status(200)
-                .body(usuarioServices.findByIdUsuario(idUsuario));
+                .body(usuarioService.findByIdUsuario(idUsuario));
     }
 
     @GetMapping("/username/{username}")
     public ResponseEntity<Usuario> findByUsername (@PathVariable String username){
         return ResponseEntity
                 .status(200)
-                .body(usuarioServices.findByUsername(username));
+                .body(usuarioService.findByUsername(username));
     }
 
     @GetMapping
     public ResponseEntity<List<Usuario>> findAllUsuarios (){
         return ResponseEntity
                 .status(200)
-                .body(usuarioServices.findAllUsuarios());
+                .body(usuarioService.findAllUsuarios());
     }
 
     @PostMapping
     public ResponseEntity<Usuario> saveUsuario (@Validated @RequestBody Usuario usuario){
         return ResponseEntity
                 .status(201)
-                .body(usuarioServices.saveUsuario(usuario));
+                .body(usuarioService.saveUsuario(usuario));
     }
 
     @PutMapping("/usuarioporadministrador/{idUsuario}")
@@ -56,7 +56,7 @@ public class UsuarioController {
          @Validated @RequestBody UpdateUsuarioByAdministratorRequestDTO requestDTO){
         return ResponseEntity
                 .status(200)
-                .body(usuarioServices.updateUsuarioAdministrador(idUsuario, requestDTO));
+                .body(usuarioService.updateUsuarioAdministrador(idUsuario, requestDTO));
     }
 
     @PutMapping("/agregarsecciones/{idUsuario}")
@@ -65,7 +65,7 @@ public class UsuarioController {
          @Validated @RequestBody UpdateIdSeccionesUsuarioByAdministratorRequestDTO requestDTO){
         return ResponseEntity
                 .status(200)
-                .body(usuarioServices.UpdateAddIdSeccionesUsuarioByAdministrator(idUsuario, requestDTO));
+                .body(usuarioService.UpdateAddIdSeccionesUsuarioByAdministrator(idUsuario, requestDTO));
     }
 
     @PutMapping("/quitarsecciones/{idUsuario}")
@@ -74,7 +74,7 @@ public class UsuarioController {
           @Validated @RequestBody UpdateIdSeccionesUsuarioByAdministratorRequestDTO requestDTO){
         return ResponseEntity
                 .status(200)
-                .body(usuarioServices.UpdateRemoveIdSeccionesUsuarioByAdministrator(idUsuario, requestDTO));
+                .body(usuarioService.UpdateRemoveIdSeccionesUsuarioByAdministrator(idUsuario, requestDTO));
     }
 
     @PutMapping("/usuario/{idUsuario}")
@@ -83,7 +83,7 @@ public class UsuarioController {
             @Validated @RequestBody UpdateUsuarioByUsuarioRequestDTO requestDTO){
         return ResponseEntity
                 .status(200)
-                .body(usuarioServices.UpdateUsuarioByUsuarioWithId(idUsuario, requestDTO));
+                .body(usuarioService.UpdateUsuarioByUsuarioWithId(idUsuario, requestDTO));
     }
 
     @PutMapping("/username/{username}")
@@ -92,7 +92,7 @@ public class UsuarioController {
             @Validated @RequestBody UpdateUsuarioByUsuarioRequestDTO requestDTO){
         return ResponseEntity
                 .status(200)
-                .body(usuarioServices.UpdateUsuarioByUsuarioWithUsername(username, requestDTO));
+                .body(usuarioService.UpdateUsuarioByUsuarioWithUsername(username, requestDTO));
     }
 
     //Falta el Delete que hay que pensar en la ideia de poner un estado inacticvo o offline.
@@ -100,8 +100,8 @@ public class UsuarioController {
     //PARA DELETAR USUARIO HAY QUE VALIDAR QUE ESTE NO ESTE EN UNA SOLICITUD DE UN DOCENTE E INVENTARIO
     @DeleteMapping("/{idUsuario}")
     public ResponseEntity<Void> deleteUsuarioById(@PathVariable Long idUsuario){
-        if(usuarioServices.existsByIdUsuario(idUsuario)){
-            usuarioServices.deleteUsuarioById(idUsuario);
+        if(usuarioService.existsByIdUsuario(idUsuario)){
+            usuarioService.deleteUsuarioById(idUsuario);
             return ResponseEntity.noContent().build();
         }else{
             return ResponseEntity.notFound().build();

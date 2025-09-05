@@ -3,6 +3,7 @@ package Rol.Msvc_Rol.models.entity;
 import Rol.Msvc_Rol.models.RolNombre;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.http.HttpStatusCode;
 
 @Entity
 @Table(name="rol")
@@ -21,4 +22,6 @@ public class Rol {
     @Enumerated(EnumType.STRING)
     @Column(name="nombre_rol",nullable = false, unique = true, updatable = false)
     private RolNombre nombreRol;
+
+
 }

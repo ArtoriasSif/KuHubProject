@@ -1,12 +1,17 @@
 package Usuario.Msvc_Usuario.models.entity;
 
+import Rol.Msvc_Rol.models.RolNombre;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -17,15 +22,19 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 
-public class Usuario {
+public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_usuario",nullable = false)
+    @Column(name = "id_usuario", nullable = false)
     private Long idUsuario;
 
     @Column(name = "id_rol")
     private Long idRol;
+
+    // ⚠️ Este rol no se guarda en la BD. Se obtiene vía RolClientRest
+    @Transient
+    private RolNombre rol;
 
     @ElementCollection
     @CollectionTable(name = "usuario_secciones", joinColumns = @JoinColumn(name = "id_usuario"))
@@ -39,7 +48,7 @@ public class Usuario {
     @Column(name = "segundo_nombre")
     private String segundoNombre;
 
-    @Column(name = "apellido_materno" )
+    @Column(name = "apellido_materno")
     private String apellidoMaterno;
 
     @Column(name = "apellido_paterno", nullable = false)
@@ -61,4 +70,46 @@ public class Usuario {
     )
     @Column(nullable = false)
     private String password;
+
+    // ---------------- UserDetails ----------------
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (rol != null) {
+            return List.of(new SimpleGrantedAuthority(rol.name()));
+        }
+        return List.of();
+    }
+
+    @Override
+    public String getPassword() {
+        return password; // corregido: antes estaba "clave"
+    }
+
+    @Override
+    public String getUsername() {
+        return username; // ahora usa username consistente con Spring Security
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // cuenta no expirada
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // cuenta no bloqueada
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // contraseña no expirada
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // cuenta habilitada
+    }
+
+
 }
