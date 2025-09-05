@@ -1,7 +1,7 @@
 package Rol.Msvc_Rol.controllers;
 
-import Rol.Msvc_Rol.dtos.RolUpdateNameResquest;
-import Rol.Msvc_Rol.models.Rol;
+import Rol.Msvc_Rol.dtos.RolNameRequestDTO;
+import Rol.Msvc_Rol.models.entity.Rol;
 import Rol.Msvc_Rol.services.RolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,16 +39,16 @@ public class RolController {
     }
 
     @PostMapping
-    public ResponseEntity<Rol> createRol(@Validated @RequestBody Rol rol){
+    public ResponseEntity<Rol> createRol(@Validated @RequestBody RolNameRequestDTO requestDTO){
         return ResponseEntity
                 .status(201)
-                .body(rolService.saveRol(rol));
+                .body(rolService.saveRol(requestDTO));
     }
 
     @PutMapping("/{idRol}")
     public ResponseEntity<Rol> updateNameRolById
             (@PathVariable Long idRol,
-             @Validated @RequestBody RolUpdateNameResquest nameResquest){
+             @Validated @RequestBody RolNameRequestDTO nameResquest){
         return ResponseEntity
                 .status(200)
                 .body(rolService.updateNameRolById(idRol, nameResquest));
@@ -57,7 +57,7 @@ public class RolController {
     @PutMapping("/nombre/{nombreRol}")
     public ResponseEntity<Rol> updateNameRolByName
             (@PathVariable String nombreRol,
-             @Validated @RequestBody RolUpdateNameResquest nameResquest){
+             @Validated @RequestBody RolNameRequestDTO nameResquest){
         return ResponseEntity
                 .status(200)
                 .body(rolService.updateNameRolByName(nombreRol, nameResquest));

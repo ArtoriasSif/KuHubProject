@@ -1,5 +1,6 @@
-package Rol.Msvc_Rol.models;
+package Rol.Msvc_Rol.models.entity;
 
+import Rol.Msvc_Rol.models.RolNombre;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +18,7 @@ public class Rol {
     @Column(name = "id_rol",nullable = false)
     private Long idRol;
 
-    @Column(name="nombre_rol",nullable = false)
-    private String nombreRol;
+    @Enumerated(EnumType.STRING)
+    @Column(name="nombre_rol",nullable = false, unique = true, updatable = false)
+    private RolNombre nombreRol;
 }
