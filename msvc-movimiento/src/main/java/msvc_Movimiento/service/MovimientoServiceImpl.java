@@ -70,8 +70,8 @@ public class MovimientoServiceImpl implements MovimientoService {
     }
 
     @Override
-    public List<MovimientoDTO> findByIdProducto(Long idProducto){
-        return movimientoRepository.findAllByIdProducto(idProducto)
+    public List<MovimientoDTO> findByIdProducto(Long idproducto){
+        return movimientoRepository.findAllByIdProducto(idproducto)
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
