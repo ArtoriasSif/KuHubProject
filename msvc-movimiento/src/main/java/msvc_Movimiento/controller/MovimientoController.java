@@ -26,7 +26,7 @@ public class MovimientoController {
     }
 
     @GetMapping("/producto/{idproducto}")
-    public ResponseEntity<List<MovimientoDTO>> findByIdProducto(Long idproducto) {
+    public ResponseEntity<List<MovimientoDTO>> findByIdProducto(@PathVariable Long idproducto) {
         return ResponseEntity
                 .ok(movimientoService.findByIdProducto(idproducto));
     }

@@ -118,8 +118,11 @@ public class InventarioServiceImpl implements InventarioService {
     //Checkeado✅
     @Override
     public Producto findProductoByIdInventario(Long idInventario){
-        return this.inventarioRepository.findProductoByIdInventario(idInventario)
-                .orElseThrow(()-> new InventarioException("No se encontró el producto con ID: " + idInventario));
+        Inventario inventarioPrueba = this.inventarioRepository.findById(idInventario)
+                .orElseThrow(()-> new InventarioException("No se encontró el Inventario"));
+
+        return this.productoClientRest.findProductoById(inventarioPrueba.getIdProducto());
+
     }
 
     //FALTA PROBAR POSTMAN
