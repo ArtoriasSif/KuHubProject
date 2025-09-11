@@ -312,11 +312,53 @@ function InventarioPage() {
     };
     
     const handleExcelUpload = async (workbook) => {
-        // ... (Tu lógica de Excel aquí, no necesita cambios)
+        if (!workbook || !workbook.SheetNames) return alert("El archivo Excel no pudo ser procesado.");
+        try {
+            const insumosParaCargar = [];
+            workbook.SheetNames.forEach(sheetName => {
+                const sheet = workbook.Sheets[sheetName];
+                if (sheet.Props && sheet.Props.Hidden) return;
+                const datosDeLaHoja = XLSX.utils.sheet_to_json(sheet);
+                const categoria = sheetName;
+                datosDeLaHoja.forEach(filaDelExcel => {
+                    const obtenerValor = (fila, posiblesNombres) => {
+                        for (const nombre of posiblesNombres) {
+                            const claveReal = Object.keys(fila).find(k => k.toLowerCase().trim() === nombre.toLowerCase());
+                            if (claveReal) return fila[claveReal];
+                        }
+                        return null;
+                    };
+                    const nombreInsumo = obtenerValor(filaDelExcel, ['insumo', 'nombre']);
+                    if (!nombreInsumo) return;
+                    insumosParaCargar.push({
+                        nombreProducto: nombreInsumo,
+                        unidadMedida: obtenerValor(filaDelExcel, ['u / m', 'unidad de medida']) || 'Unidad',
+                        stock: parseFloat(obtenerValor(filaDelExcel, ['cantidad total', 'stock', 'inicial']) || 0),
+                        categoria: { nombreCategoria: categoria }, // Creamos el objeto categoría como espera el backend
+                    });
+                });
+            });
+            if (insumosParaCargar.length === 0) return alert("No se encontraron insumos válidos para cargar.");
+
+            await apiClient('/api/v1/inventario/lote', { 
+                method: 'POST', body: JSON.stringify(insumosParaCargar) 
+            });
+            alert(`Se han cargado ${insumosParaCargar.length} insumos con éxito.`);
+            cargarInventario();
+        } catch (err) {
+            alert(`Error al cargar el archivo: ${err.message}`);
+        }
     };
 
     const handleVaciarInventario = async () => {
-        // ... (Tu lógica para vaciar aquí, no necesita cambios)
+        if (window.confirm("¿Estás seguro de que quieres borrar todo el inventario?")) {
+            try {
+                await apiClient('/api/v1/inventario/all', { method: 'DELETE' });
+                setInventario([]);
+            } catch (err) {
+                alert(`Error al vaciar el inventario: ${err.message}`);
+            }
+        }
     };
     
     // La lógica de filtrado y categorías se queda igual
@@ -402,6 +444,4 @@ function InventarioPage() {
         </>
     );
 }
-
-// CORRECTO: No hay ninguna llave extra aquí.
 export default InventarioPage;
