@@ -1,9 +1,10 @@
 package Rol.Msvc_Rol.services;
 
-import Rol.Msvc_Rol.dtos.RolUpdateNameResquest;
+import Rol.Msvc_Rol.dtos.RolNameRequestDTO;
 import Rol.Msvc_Rol.exceptions.RolExistenteException;
 import Rol.Msvc_Rol.exceptions.RolNotFoundException;
-import Rol.Msvc_Rol.models.Rol;
+import Rol.Msvc_Rol.models.RolNombre;
+import Rol.Msvc_Rol.models.entity.Rol;
 import Rol.Msvc_Rol.repositories.RolRepository;
 import Rol.Msvc_Rol.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,13 @@ public class RolServiceImpl implements  RolService{
                 ()-> new RolNotFoundException(idRol));
     }
 
+    @Override
+    public Rol findByNameRol(RolNombre nombreRol) {
+        return rolRepository.findByNombreRol(nombreRol)
+                .orElseThrow(() -> new RolNotFoundException(nombreRol.name()));
+    }
+
+
     @Transactional
     @Override
     public List<Rol> findAllRoles() {
@@ -37,46 +45,78 @@ public class RolServiceImpl implements  RolService{
 
     @Transactional
     @Override
-    public Rol saveRol(Rol rol) {
+    public Rol saveRol(RolNameRequestDTO requestDTO) {
 
-        String capitalizado = StringUtils.capitalizarPalabras(rol.getNombreRol());
+        String capitalizado = StringUtils.capitalizarPalabras(requestDTO.getNombreRol());
 
-        if (rolRepository.findByNombreRol(capitalizado).isPresent()){
+        String enumKey = StringUtils.formatearParaEnum(requestDTO.getNombreRol());
+
+        RolNombre rolEnum;
+        try {
+            rolEnum = RolNombre.valueOf(enumKey);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Rol inválido: " + capitalizado);
+        }
+
+        if (rolRepository.findByNombreRol(rolEnum).isPresent()) {
             throw new RolExistenteException(capitalizado);
         }
-        rol.setNombreRol(capitalizado);
+
+        Rol rol = new Rol();
+        rol.setNombreRol(RolNombre.valueOf(enumKey));
         return rolRepository.save(rol);
     }
 
     @Transactional
     @Override
-    public Rol updateNameRolByName(String nombreRol, RolUpdateNameResquest nameResquest) {
+    public Rol updateNameRolByName(String nombreRolExistente, RolNameRequestDTO requestDTO) {
 
-        Rol rol = rolRepository.findByNombreRol(nombreRol).orElseThrow(
-                () -> new RolNotFoundException(nombreRol)
-        );
+        String capitalizado = StringUtils.capitalizarPalabras(requestDTO.getNombreRol());
+        String enumKeyNuevo = StringUtils.formatearParaEnum(requestDTO.getNombreRol());
 
-        String capitalizado = StringUtils.capitalizarPalabras(nameResquest.getNombreRol());
-        if (rolRepository.findByNombreRol(capitalizado).isPresent()) {
-            throw new RolExistenteException(capitalizado);
+        RolNombre rolEnumNuevo;
+        try {
+            rolEnumNuevo = RolNombre.valueOf(enumKeyNuevo);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Rol inválido: " + capitalizado);
         }
 
-        rol.setNombreRol(capitalizado);
-        return rolRepository.save(rol);
+        if (rolRepository.findByNombreRol(rolEnumNuevo).isPresent()) {
+            throw new RolExistenteException(capitalizado);
+        }
+        Rol rolExistente = rolRepository.findByNombreRol(RolNombre.valueOf(StringUtils.formatearParaEnum(nombreRolExistente)))
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + nombreRolExistente));
+
+        rolExistente.setNombreRol(rolEnumNuevo);
+        return rolRepository.save(rolExistente);
+
     }
 
 
     @Transactional
     @Override
-    public Rol updateNameRolById(Long idRol, RolUpdateNameResquest nameResquest ){
+    public Rol updateNameRolById(Long idRol, RolNameRequestDTO nameRequest ){
         Rol rol = rolRepository.findById(idRol).orElseThrow(
-                ()-> new RolNotFoundException(idRol));
+                () -> new RolNotFoundException(idRol));
 
-        String capitalizado = StringUtils.capitalizarPalabras(nameResquest.getNombreRol());
-        if (rolRepository.findByNombreRol(capitalizado).isPresent()){
+        // Capitalizamos y formateamos para enum
+        String capitalizado = StringUtils.capitalizarPalabras(nameRequest.getNombreRol());
+        String enumKey = StringUtils.formatearParaEnum(capitalizado);
+
+        // Convertimos a enum
+        RolNombre rolEnum;
+        try {
+            rolEnum = RolNombre.valueOf(enumKey);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Rol inválido: " + capitalizado);
+        }
+
+        // Verificamos que no exista otro rol con el mismo enum
+        if (rolRepository.findByNombreRol(rolEnum).isPresent()) {
             throw new RolExistenteException(capitalizado);
         }
-        rol.setNombreRol(capitalizado);
+
+        rol.setNombreRol(rolEnum);
         return rolRepository.save(rol);
     }
 

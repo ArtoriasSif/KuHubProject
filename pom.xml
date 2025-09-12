@@ -21,6 +21,7 @@
 	<url>https://github.com/tuusuario/kuhub</url>
 
 	<modules>
+		<module>msvc-common</module>                    <!-- librería común -->
 		<module>msvc-Producto</module> 					<!-- puerto 8081 -->
 		<module>msvc-DetalleProductoSolicitud</module> 	<!-- puerto 8082 -->
 		<module>msvc-SolicitudDocente</module> 			<!-- puerto 8083 -->
@@ -32,7 +33,8 @@
 		<module>msvc-Asignatura</module>				<!-- puerto 8089 -->
 		<module>msvc-movimiento</module>				<!-- puerto 8090 -->
 		<module>msvc-Seccion</module>				    <!-- puerto 8091 -->
-		<module>msvc-apigateway</module>				<!-- puerto 8095 -->
+		<module>msvc-apigateway</module>
+		<module>msvc-Common</module>                <!-- puerto 8095 -->
 
 	</modules>
 
@@ -53,7 +55,58 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<build>
+
+	<dependencies>
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.github.openfeign</groupId>
+			<artifactId>feign-slf4j</artifactId>
+			<version>12.3</version>
+		</dependency>
+
+		<!-- Spring Boot Core -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot</artifactId>
+		</dependency>
+
+		<!-- OpenFeign para todos los microservicios -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
+
+		<!-- Jackson JSON -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
+		<!-- Validaciones (Bean Validation / Jakarta) -->
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+		</dependency>
+
+	</dependencies>
+
+    <build>
 		<pluginManagement>
 			<plugins>
 				<plugin>

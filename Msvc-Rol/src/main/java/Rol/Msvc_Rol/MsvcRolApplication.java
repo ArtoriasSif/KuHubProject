@@ -3,7 +3,7 @@ package Rol.Msvc_Rol;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"Rol.Msvc_Rol", "GlobalServerPorts"})
 public class MsvcRolApplication {
 
 	public static void main(String[] args) {

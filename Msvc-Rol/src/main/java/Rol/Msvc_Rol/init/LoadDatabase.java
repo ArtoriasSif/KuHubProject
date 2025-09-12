@@ -1,6 +1,7 @@
 package Rol.Msvc_Rol.init;
 
-import Rol.Msvc_Rol.models.Rol;
+import Rol.Msvc_Rol.models.RolNombre;
+import Rol.Msvc_Rol.models.entity.Rol;
 import Rol.Msvc_Rol.repositories.RolRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +21,13 @@ public class LoadDatabase implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (rolRepository.count() == 0) {
-            List<String> roles = Arrays.asList(
-                    "Docente",          // ID esperado: 1
-                    "Administrador",    // ID esperado: 2
-                    "Encargado Bodega" // ID esperado: 3
-            );
+            List<RolNombre> roles = Arrays.asList(RolNombre.values());
 
-            for (String nombre : roles) {
+            for (RolNombre rolNombre : roles){
                 Rol rol = new Rol();
-                rol.setNombreRol(nombre);
+                rol.setNombreRol(rolNombre);
                 rolRepository.save(rol);
-                log.info("Rol creado: {}", nombre);
+                log.info("Rol creado: {}", rolNombre);
             }
 
             log.info("✅ Se crearon los roles iniciales correctamente");

@@ -7,6 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class RolUpdateNameResquest {
+public class RolNameRequestDTO {
     private String nombreRol;
 }

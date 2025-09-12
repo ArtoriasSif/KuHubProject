@@ -1,5 +1,6 @@
 package Usuario.Msvc_Usuario.models.entity;
 
+import Rol.Msvc_Rol.models.RolNombre;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,6 +10,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Entity
 @Table(name="usuario")
 @Getter
@@ -16,7 +18,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-
 public class Usuario {
 
     @Id
@@ -26,6 +27,9 @@ public class Usuario {
 
     @Column(name = "id_rol")
     private Long idRol;
+
+    @Transient // No se guarda en la base de datos
+    private RolNombre rol;
 
     @ElementCollection
     @CollectionTable(name = "usuario_secciones", joinColumns = @JoinColumn(name = "id_usuario"))
@@ -61,4 +65,6 @@ public class Usuario {
     )
     @Column(nullable = false)
     private String password;
+
+
 }

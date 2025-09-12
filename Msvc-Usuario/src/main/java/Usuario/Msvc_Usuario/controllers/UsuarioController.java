@@ -1,5 +1,6 @@
 package Usuario.Msvc_Usuario.controllers;
 
+import GlobalServerPorts.MicroserviciosConfig;
 import Usuario.Msvc_Usuario.dtos.UpdateIdSeccionesUsuarioByAdministratorRequestDTO;
 import Usuario.Msvc_Usuario.dtos.UpdateUsuarioByAdministratorRequestDTO;
 import Usuario.Msvc_Usuario.dtos.UpdateUsuarioByUsuarioRequestDTO;
@@ -12,15 +13,23 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//porto de la aplicacion 8084
 @RestController
-@RequestMapping("/api/v1/usuario")
+@RequestMapping("/usuario")  // URL fija para el controller
 @Validated
-
 public class UsuarioController {
 
     @Autowired
     private UsuarioServices usuarioServices;
+
+    @Autowired
+    private MicroserviciosConfig microserviciosConfig;
+
+    // Endpoint de prueba para mostrar la URL centralizada
+    @GetMapping("/info")
+    public String mostrarUrlUsuario() {
+        return "URL usuario desde config: " + microserviciosConfig.getUsuario().getUrl();
+    }
+
 
     @GetMapping("/id/{idUsuario}")
     public ResponseEntity<Usuario> findByIdUsuario (@PathVariable Long idUsuario){

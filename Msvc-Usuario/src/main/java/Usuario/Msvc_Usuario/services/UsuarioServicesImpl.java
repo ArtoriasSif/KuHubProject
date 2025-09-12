@@ -1,18 +1,19 @@
 package Usuario.Msvc_Usuario.services;
 
-import Usuario.Msvc_Usuario.clients.RolClientRest;
-import Usuario.Msvc_Usuario.clients.SeccionClientRest;
+import GlobalServerPorts.FeignConfig;
+import GlobalServerPorts.dto.ClassesModelsDtos.RolDTO;
+import GlobalServerPorts.dto.ClassesModelsDtos.SeccionDTO;
+import GlobalServerPorts.dto.InterfacesFeignClientEmpty.RolClientRest;
+import GlobalServerPorts.dto.InterfacesFeignClientEmpty.SeccionClientRest;
 import Usuario.Msvc_Usuario.dtos.UpdateIdSeccionesUsuarioByAdministratorRequestDTO;
 import Usuario.Msvc_Usuario.dtos.UpdateUsuarioByAdministratorRequestDTO;
 import Usuario.Msvc_Usuario.dtos.UpdateUsuarioByUsuarioRequestDTO;
 import Usuario.Msvc_Usuario.exceptions.*;
-import Usuario.Msvc_Usuario.models.Seccion;
 import Usuario.Msvc_Usuario.models.entity.Usuario;
 import Usuario.Msvc_Usuario.repositories.UsuarioRepository;
 import Usuario.Msvc_Usuario.utils.StringUtils;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,11 +29,9 @@ public class UsuarioServicesImpl implements UsuarioServices{
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private SeccionClientRest seccionClientRest;
-
-    @Autowired
-    private RolClientRest rolClientRest;
+    public UsuarioServicesImpl(FeignConfig feignConfig) {
+        this.feignConfig = feignConfig;
+    }
 
     @Transactional
     @Override
@@ -87,7 +86,9 @@ public class UsuarioServicesImpl implements UsuarioServices{
             List<Long> seccionesValidas = usuario.getIdSecciones().stream()
                     .filter(idSeccion -> {
                         try {
-                            Seccion seccion = seccionClientRest.findByIdSeccion(idSeccion).getBody();
+                            SeccionDTO seccion = feignConfig
+                                    .getClient("seccion", SeccionClientRest.class)
+                                    .findById(idSeccion);
                             return seccion != null;
                         } catch (FeignException.NotFound e) {
                             log.warn("Sección con id {} no encontrada, será ignorada.", idSeccion);
@@ -103,14 +104,17 @@ public class UsuarioServicesImpl implements UsuarioServices{
             usuario.setIdSecciones(seccionesValidas);
         }
 
-        if (usuario.getIdRol() == null) {
-            usuario.setIdRol(1L); // asigna rol por defecto
-        }else{
-            if(!rolClientRest.existeRolById(usuario.getIdRol())){
-                usuario.setIdRol(1L); // Si no existe el rol, asigna rol por defecto
-            }
-        }
+        try {
+            RolClientRest rolClientRest = feignConfig.getClient("rol", RolClientRest.class);
 
+            if (usuario.getIdRol() == null || !rolClientRest.existeRolById(usuario.getIdRol())) {
+                usuario.setIdRol(1L); // asigna rol por defecto
+            }
+        } catch (Exception e) {
+            System.err.println("Error al validar el rol con ID " + usuario.getIdRol() +
+                    " en microservicio: " + e.getMessage());
+            usuario.setIdRol(1L); // fallback: asigna rol por defecto si el servicio falla
+        }
 
         return usuarioRepository.save(usuario);
     }
@@ -131,15 +135,22 @@ public class UsuarioServicesImpl implements UsuarioServices{
             );
         }
 
-        if (request.getIdRol() != null) {
-            if(usuario.getIdRol() != request.getIdRol()){
-                if(!rolClientRest.existeRolById(request.getIdRol())){
+        if (request.getIdRol() != null && !request.getIdRol().equals(usuario.getIdRol())) {
+            try {
+                RolClientRest rolClientRest = feignConfig.getClient("rol", RolClientRest.class);
+
+                if (!rolClientRest.existeRolById(request.getIdRol())) {
                     usuario.setIdRol(1L); // Si no existe el rol, asigna rol por defecto
-                }else{
+                } else {
                     usuario.setIdRol(request.getIdRol());
                 }
+            } catch (Exception e) {
+                System.err.println("Error validando rol con ID " + request.getIdRol() +
+                        " en microservicio: " + e.getMessage());
+                usuario.setIdRol(1L); // fallback en caso de error
             }
         }
+
 
         if(request.getPrimeroNombre() != null){
             String primerNombre = StringUtils.capitalizarPalabras(request.getPrimeroNombre());
@@ -210,14 +221,23 @@ public class UsuarioServicesImpl implements UsuarioServices{
 
         if (listaRequest != null && listaRequest.getIdSecciones() != null) {
             for (Long idSeccionRequest : listaRequest.getIdSecciones()) {
-                // Solo agregamos si NO está ya en la lista y además existe en el microservicio
-                if (!listaIdSecciones.contains(idSeccionRequest) &&
-                        seccionClientRest.existeSeccionById(idSeccionRequest)) {
+                if (!listaIdSecciones.contains(idSeccionRequest)) {
+                    try {
+                        SeccionClientRest seccionClientRest = feignConfig.getClient("seccion", SeccionClientRest.class);
 
-                    listaIdSecciones.add(idSeccionRequest);
+                        if (seccionClientRest.existeSeccionById(idSeccionRequest)) {
+                            listaIdSecciones.add(idSeccionRequest);
+                        } else {
+                            System.out.println("Sección con ID " + idSeccionRequest + " no existe en el microservicio.");
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Error validando sección con ID " + idSeccionRequest +
+                                " en microservicio: " + e.getMessage());
+                    }
                 }
             }
         }
+
 
         usuario.setIdSecciones(listaIdSecciones);
         return usuarioRepository.save(usuario);
@@ -296,6 +316,37 @@ public class UsuarioServicesImpl implements UsuarioServices{
     @Override
     public void deleteUsuarioById(Long idUsuario) {
         usuarioRepository.deleteById(idUsuario);
+    }
+
+
+
+
+
+
+    // ===========================================================================================
+    // Feign Clients
+    // ===========================================================================================
+
+
+    private final FeignConfig feignConfig;
+
+
+    @Override
+    public RolDTO getRolById(Long id) {
+        RolClientRest rolClient = feignConfig.getClient("rol", RolClientRest.class);
+        return rolClient.findByIdRol(id);
+    }
+
+    @Override
+    public Boolean existeRol(Long id) {
+        RolClientRest rolClient = feignConfig.getClient("rol", RolClientRest.class);
+        return rolClient.existeRolById(id);
+    }
+
+    @Override
+    public SeccionDTO getSeccionById(Long id) {
+        SeccionClientRest seccionClient = feignConfig.getClient("seccion", SeccionClientRest.class);
+        return seccionClient.findById(id);
     }
 
 

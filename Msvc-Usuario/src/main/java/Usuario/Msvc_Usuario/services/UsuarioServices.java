@@ -1,5 +1,8 @@
 package Usuario.Msvc_Usuario.services;
 
+import GlobalServerPorts.dto.ClassesModelsDtos.RolDTO;
+import GlobalServerPorts.dto.ClassesModelsDtos.SeccionDTO;
+import GlobalServerPorts.dto.ClassesModelsDtos.UsuarioDTO;
 import Usuario.Msvc_Usuario.dtos.UpdateIdSeccionesUsuarioByAdministratorRequestDTO;
 import Usuario.Msvc_Usuario.dtos.UpdateUsuarioByAdministratorRequestDTO;
 import Usuario.Msvc_Usuario.dtos.UpdateUsuarioByUsuarioRequestDTO;
@@ -26,4 +29,15 @@ public interface UsuarioServices {
     void deleteUsuarioById(Long idUsuario);
 
     boolean existsByIdUsuario(Long idUsuario);
+
+
+
+    // ===========================================================================================
+    // Feign Clients
+    // ===========================================================================================
+    RolDTO getRolById(Long id);
+    SeccionDTO getSeccionById(Long id);
+    Boolean existeRol(Long id);
+    // Agregar métodos para otros microservicios según necesidad
+
 }
