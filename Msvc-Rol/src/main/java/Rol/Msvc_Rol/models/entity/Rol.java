@@ -21,4 +21,5 @@ public class Rol {
     @Enumerated(EnumType.STRING)
     @Column(name="nombre_rol",nullable = false, unique = true, updatable = false)
     private RolNombre nombreRol;
+
 }

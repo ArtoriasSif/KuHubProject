@@ -1,7 +1,6 @@
 package Usuario.Msvc_Usuario.controllers;
 
 
-import GlobalServerPorts.MicroserviciosConfig;
 import Usuario.Msvc_Usuario.security.jwt.JwtUtil;
 import Usuario.Msvc_Usuario.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
@@ -43,7 +42,7 @@ public class AuthController {
             );
 
             // Cargar usuario
-            final var userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+            var userDetails = userDetailsService.loadUserByUsername(request.getUsername());
 
             // Generar audiencias según rol
             List<String> audiences = jwtUtils.mapRolToAudiences(userDetails);
@@ -60,11 +59,10 @@ public class AuthController {
         }
     }
 
-    // DTOs internos
+    // DTOs
     public static class AuthRequest {
         private String username;
         private String password;
-
         public String getUsername() { return username; }
         public void setUsername(String username) { this.username = username; }
         public String getPassword() { return password; }
