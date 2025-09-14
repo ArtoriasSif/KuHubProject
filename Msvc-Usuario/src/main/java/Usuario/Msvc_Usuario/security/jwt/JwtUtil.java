@@ -35,7 +35,7 @@ public class JwtUtil {
                 .claim("rol", userDetails.getAuthorities().iterator().next().getAuthority())
                 .claim("aud", audiences)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hora
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 8)) // 8 horas
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -69,17 +69,32 @@ public class JwtUtil {
         String rol = userDetails.getAuthorities().iterator().next().getAuthority();
         List<String> audiences = new ArrayList<>();
 
+        // Todos los usuarios siempre acceden al msvc-usuario
         audiences.add("msvc-usuario");
 
         switch (rol) {
-            case "ROLE_ADMIN":
-            case "ROLE_COADMIN":
+            case "ROLE_ADMINISTRADOR":
                 audiences.add("msvc-rol");
-                audiences.add("msvc-producto");
-                audiences.add("msvc-inventario");
+                audiences.add("msvc-asignatura");
+                audiences.add("msvc-seccion"); // ✅ Debe estar exactamente así
                 break;
-            case "ROLE_DOCENTE":
+
+            case "ROLE_CO_ADMINISTRADOR":
                 audiences.add("msvc-rol");
+                audiences.add("msvc-asignatura");
+                audiences.add("msvc-seccion");
+                break;
+
+            case "ROLE_DOCENTE":
+            case "ROLE_DOCENTE_COORDINADOR":
+                audiences.add("msvc-rol");
+                audiences.add("msvc-seccion");
+                break;
+
+            case "ROLE_ENCARGADO_BODEGA":
+            case "ROLE_AUXILIAR_ENCARGADO_BODEGA":
+                audiences.add("msvc-inventario");
+                audiences.add("msvc-seccion");
                 break;
         }
 
