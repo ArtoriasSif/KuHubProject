@@ -212,5 +212,17 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
         detalleRecetaRepository.deleteById(idDetalleReceta);
     }
 
+    @Transactional
+    @Override
+    public List<DetalleRecetaResponseDTO> AsociarProductosAReceta(String nombreReceta){
 
+        try{
+            Receta receta = this.recetaClientRest.findByNombreReceta(nombreReceta);
+            return findAllByIdRecetaConDetalles(receta.getIdReceta());
+        }catch (Exception e){
+            throw new DetalleRecetaException("Receta no encontrada");
+        }
+
+
+    }
 }

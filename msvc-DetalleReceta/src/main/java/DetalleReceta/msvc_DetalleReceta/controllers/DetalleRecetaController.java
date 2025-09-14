@@ -116,6 +116,10 @@ public class DetalleRecetaController {
         }
     }
 
+    @GetMapping("/agruparpornombre/{nombreReceta}")
+    public ResponseEntity<List<DetalleRecetaResponseDTO>> AsociarProductosAReceta(@PathVariable String nombreReceta) {
+        return ResponseEntity.status(200).body(detalleRecetaService.AsociarProductosAReceta(nombreReceta));
+    }
 
 
 }

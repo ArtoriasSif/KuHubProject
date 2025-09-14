@@ -19,4 +19,5 @@ public interface DetalleRecetaService {
     void deleteByidDetalleReceta(Long idDetalleReceta);
     boolean existsByIdReceta(Long idReceta);
     boolean existProductoInDetalleReceta(Long idProducto);
+    List<DetalleRecetaResponseDTO> AsociarProductosAReceta(String nombreReceta);
 }

@@ -161,4 +161,15 @@ public class RecetaServicesImp implements RecetaServices{
         recetaRepository.deleteById(idReceta);
     }
 
+    @Override
+    public Receta findByNombreReceta(String nombreReceta) {
+        try {
+            return recetaRepository.findByNombreReceta(nombreReceta);
+        }catch (FeignException e){
+            throw new RecetaException("El nombre receta " + nombreReceta + " no existe");
+        }
+
+    }
+
+
 }

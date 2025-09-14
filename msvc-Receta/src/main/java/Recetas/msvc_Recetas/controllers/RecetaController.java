@@ -78,6 +78,13 @@ public class RecetaController {
         }
     }
 
+    @GetMapping("/nombre/{nombreReceta}")
+    public ResponseEntity<Receta> findByNombreReceta(@PathVariable String nombreReceta) {
+        return ResponseEntity
+                .status(200)
+                .body(this.recetaServices.findByNombreReceta(nombreReceta));
+    }
+
 
 
 }

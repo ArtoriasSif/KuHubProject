@@ -14,5 +14,6 @@ public interface RecetaServices {
     Receta save (Receta receta);
     Receta updateNameByIdReceta (Long idReceta, UpdateNameRecetaRequestDTO request);
     void deleteByIdReceta(Long idReceta);
+    Receta findByNombreReceta(String nombreReceta);
 
 }
