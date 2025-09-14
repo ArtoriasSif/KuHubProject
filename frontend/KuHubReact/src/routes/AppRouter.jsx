@@ -11,16 +11,18 @@ import AsignaturasPage from '../pages/Asignaturas/AsignaturasPage';
 function AppRouter() {
   return (
     // Solo se necesita <Routes> aquí
-    <Routes>
-      <Route path="/" element={<LoginPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/admin/hub" element={<HubAdminPage />} />
-      <Route path="/docente/solicitud" element={<SolicitudPage />} />
-      <Route path="/admin/inventario" element={<InventarioPage />} />
-      <Route path="/account" element={<AccountPage />} />
-      <Route path="/admin/asignaturas" element={<AsignaturasPage />} />
-      {/* ...tus otras rutas... */}
-    </Routes>
+    <main>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/admin/hub" element={<HubAdminPage />} />
+        <Route path="/docente/solicitud" element={<SolicitudPage />} />
+        <Route path="/admin/inventario" element={<InventarioPage />} />
+        <Route path="/account" element={<AccountPage />} />
+        <Route path="/admin/asignaturas" element={<AsignaturasPage />} />
+        {/* ...tus otras rutas... */}
+      </Routes>
+    </main>
   );
 }
 

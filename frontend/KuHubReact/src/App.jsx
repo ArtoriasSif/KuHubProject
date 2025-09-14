@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import AppRouter from './routes/AppRouter.jsx';
 import HamburgerButton from './components/HamburgerButton/HamburgerButton';
 import AsideMenu from './components/AsideMenu/AsideMenu';
+import Footer from './components/Footer/Footer.jsx';
 
 function App() {
   // useLocation ahora funciona porque <App /> está dentro de <BrowserRouter> en main.jsx
@@ -27,6 +28,7 @@ function App() {
 
       {/* El enrutador siempre se renderiza para mostrar la página correcta */}
       <AppRouter />
+      <Footer />
     </>
   );
 }

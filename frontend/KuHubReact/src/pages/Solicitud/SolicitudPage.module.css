@@ -182,3 +182,16 @@
   }
   .actionsCell { justify-content: flex-start; padding-top: 20px; }
 }
+
+/* En SolicitudPage.module.css */
+
+/* Esta regla sobrescribe el max-width del contenedor principal
+   SÓLO para la página de Solicitud. */
+.solicitudContainer {
+  /* '95vw' significa que ocupará el 95% del ancho de la ventana (viewport width). */
+  max-width: 65vw !important;
+    width: 65vw !important;
+  /* Mantenemos el centrado */
+  margin-left: auto;
+  margin-right: auto;
+}

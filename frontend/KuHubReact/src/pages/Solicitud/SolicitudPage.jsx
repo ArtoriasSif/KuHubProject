@@ -1,168 +1,164 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import kuHubLogo from '../../assets/KüHubLogoWBG.png';
 import ThemeButton from '../../components/ThemeButton/ThemeButton.jsx';
 import BackButton from '../../components/BackButton/BackButton.jsx';
 import styles from './SolicitudPage.module.css';
-
-// Endpoints de los microservicios, verificados con tu imagen de puertos
-const PRODUCTO_ENDPOINT = 'http://localhost:8081/api/v1/producto';
-const SOLICITUD_DOCENTE_ENDPOINT = 'http://localhost:8083/api/v1/solicituddocente';
-const DETALLE_PEDIDO_ENDPOINT = 'http://localhost:8082/api/v1/detalleproductosolicitud';
+import apiClient from '../../services/apiClient';
 
 function SolicitudPage() {
+    // --- ESTADOS ---
     const [formData, setFormData] = useState({
         docente: 'Daniel Ojeda',
-        asignatura: '',
-        seccion: '',
-        taller: '',
+        asignaturaId: '',
+        seccionId: '',
         numeroSemana: 1,
         cantidadPersonas: 20,
         descripcionSemana: '',
         fecha: new Date().toISOString().split('T')[0],
         hora: '08:00',
     });
+
     const [asignaturas, setAsignaturas] = useState([]);
-    const [seccionesDisponibles, setSeccionesDisponibles] = useState([]);
-    const [inventario, setInventario] = useState([]);
-    const [pedidoActual, setPedidoActual] = useState([]);
+    const [seccionesMap, setSeccionesMap] = useState(new Map());
     const [pedidosHechos, setPedidosHechos] = useState([]);
-    const [productoSeleccionado, setProductoSeleccionado] = useState('');
-    const [cantidadProducto, setCantidadProducto] = useState(1);
+    const [recetas, setRecetas] = useState([]);
+    const [selectedRecetaId, setSelectedRecetaId] = useState('');
+    const [recetaLoading, setRecetaLoading] = useState(false);
+    
+    const [pedidoActual, setPedidoActual] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [enviando, setEnviando] = useState(false);
 
-    useEffect(() => {
-        const asignaturasGuardadas = JSON.parse(localStorage.getItem('asignaturas')) || [];
-        setAsignaturas(asignaturasGuardadas);
+    // --- CARGA DE DATOS ---
+    const cargarDatosParaFormulario = useCallback(async () => {
+        try {
+            const [asignaturasData, seccionesData, recetasData] = await Promise.all([
+                apiClient('/api/v1/asignatura'),
+                apiClient('/api/v1/seccion'),
+                apiClient('/api/v1/receta'),
+            ]);
 
-        const cargarDatos = async () => {
-            setLoading(true);
-            const errores = [];
+            const agrupadas = new Map();
+            seccionesData.forEach(seccion => {
+                const asignaturaId = seccion.idAsignatura;
+                if (!agrupadas.has(asignaturaId)) agrupadas.set(asignaturaId, []);
+                agrupadas.get(asignaturaId).push(seccion);
+            });
 
-            // --- Llamada 1: Cargar Inventario (Productos) ---
-            try {
-                const inventarioRes = await fetch(PRODUCTO_ENDPOINT);
-                if (!inventarioRes.ok) {
-                    throw new Error(`Servicio de productos no disponible (status: ${inventarioRes.status})`);
-                }
-                const inventarioData = await inventarioRes.json();
-                setInventario(inventarioData.map(p => ({ ...p, codigo: p.id || p.idProducto, nombre: p.nombre || p.nombreProducto })));
-            } catch (err) {
-                console.error("Fallo al cargar inventario:", err);
-                errores.push("No se pudo cargar la lista de productos.");
-                setInventario([]);
-            }
+            setAsignaturas(asignaturasData);
+            setSeccionesMap(agrupadas);
+            setRecetas(recetasData);
+        } catch (err) {
+            console.error("Fallo al cargar datos del formulario:", err);
+            setError('No se pudieron cargar los datos para crear una solicitud.');
+        }
+    }, []);
 
-            // --- Llamada 2: Cargar Historial (Solicitudes) ---
-            try {
-                const pedidosRes = await fetch(`${SOLICITUD_DOCENTE_ENDPOINT}/detalles`);
-                if (!pedidosRes.ok) {
-                    throw new Error(`Servicio de solicitudes no disponible (status: ${pedidosRes.status})`);
-                }
-                const pedidosData = await pedidosRes.json();
-                setPedidosHechos(pedidosData);
-            } catch (err) {
-                console.error("Fallo al cargar historial de pedidos:", err);
-                errores.push("No se pudo cargar el historial de pedidos.");
-                setPedidosHechos([]);
-            }
-
-            if (errores.length > 0) {
-                setError(errores.join(' '));
-            } else {
-                setError(null);
-            }
-
-            setLoading(false);
-        };
-
-        cargarDatos();
+    const cargarHistorial = useCallback(async () => {
+        try {
+            const pedidosData = await apiClient('/api/v1/solicituddocente/detalles');
+            setPedidosHechos(pedidosData);
+        } catch (err) {
+            console.error("Fallo al cargar historial de pedidos:", err);
+            setPedidosHechos([]);
+        }
     }, []);
 
     useEffect(() => {
-        if (formData.asignatura) {
-            const seccionesUnicas = [...new Set(asignaturas.filter(a => a.nombre === formData.asignatura).map(s => s.seccion))];
-            setSeccionesDisponibles(seccionesUnicas);
-            setFormData(prev => ({ ...prev, seccion: '', taller: '' }));
-        } else {
-            setSeccionesDisponibles([]);
-        }
-    }, [formData.asignatura]);
-    
-    useEffect(() => {
-        if (formData.seccion) {
-            const info = asignaturas.find(a => a.nombre === formData.asignatura && a.seccion === formData.seccion);
-            setFormData(prev => ({ ...prev, taller: info?.taller || '' }));
-        }
-    }, [formData.seccion]);
+        const cargarTodo = async () => {
+            setLoading(true);
+            await Promise.all([
+                cargarDatosParaFormulario(),
+                cargarHistorial()
+            ]);
+            setLoading(false);
+        };
+        cargarTodo();
+    }, [cargarDatosParaFormulario, cargarHistorial]);
 
+    // --- MANEJADORES DE EVENTOS ---
     const handleFormChange = (e) => {
-        const { id, value, type } = e.target;
-        setFormData(prev => ({ ...prev, [id]: type === 'number' ? parseInt(value, 10) : value }));
+        const { id, value } = e.target;
+        if (id === 'asignaturaId') {
+            setFormData(prev => ({ ...prev, asignaturaId: value, seccionId: '' }));
+        } else {
+            setFormData(prev => ({ ...prev, [id]: value }));
+        }
     };
 
-    const handleAgregarProducto = () => {
-        if (!productoSeleccionado) return alert('Selecciona un producto.');
-        const prodEnInventario = inventario.find(p => p.codigo == productoSeleccionado);
-        if (pedidoActual.find(p => p.idProducto === prodEnInventario.codigo)) return alert('Producto ya agregado.');
-        setPedidoActual(prev => [...prev, { idProducto: prodEnInventario.codigo, nombreProducto: prodEnInventario.nombre, cantidadUnidadMedida: parseFloat(cantidadProducto) }]);
-        setProductoSeleccionado('');
-        setCantidadProducto(1);
+    const handleRecetaChange = async (e) => {
+        const recetaId = e.target.value;
+        setSelectedRecetaId(recetaId);
+
+        if (!recetaId) {
+            setPedidoActual([]);
+            return;
+        }
+
+        setRecetaLoading(true);
+        try {
+            const detallesDeReceta = await apiClient(`/api/v1/detallereceta/receta/${recetaId}`);
+            const productosParaPedido = detallesDeReceta.map(detalle => ({
+                idProducto: detalle.idProducto,
+                nombreProducto: detalle.nombreProducto,
+                cantidadUnidadMedida: detalle.cantidad
+            }));
+            setPedidoActual(productosParaPedido);
+        } catch (err) {
+            alert("Error al cargar los productos de la receta.");
+            console.error(err);
+            setPedidoActual([]);
+        } finally {
+            setRecetaLoading(false);
+        }
     };
+
+    const seccionesDisponibles = formData.asignaturaId
+        ? seccionesMap.get(Number(formData.asignaturaId)) || []
+        : [];
 
     const handleQuitarProducto = (idProducto) => setPedidoActual(prev => prev.filter(p => p.idProducto !== idProducto));
 
     const handleRealizarPedido = async () => {
         if (pedidoActual.length === 0) return alert('El pedido está vacío.');
-        
+
+        const asignaturaSeleccionada = asignaturas.find(a => a.idAsignatura === Number(formData.asignaturaId));
+        const seccionSeleccionada = seccionesDisponibles.find(s => s.idSeccion === Number(formData.seccionId));
+
         const datosSolicitud = {
             numeroSemana: formData.numeroSemana,
-            numeroTaller: parseInt(formData.taller, 10),
             cantidadPersonas: formData.cantidadPersonas,
             descripcionSemana: formData.descripcionSemana.trim(),
-            sesion: formData.seccion,
-            nombreAsignatura: formData.asignatura,
+            sesion: seccionSeleccionada?.nombreSeccion || '',
+            nombreAsignatura: asignaturaSeleccionada?.nombreAsignatura || '',
             fechaProgramada: formData.fecha,
             estado: "Pendiente"
         };
         
-        for (const [key, value] of Object.entries(datosSolicitud)) {
-            if (value === null || value === '' || Number.isNaN(value)) {
-                return alert(`El campo '${key}' está vacío o es inválido.`);
-            }
-        }
-        
         try {
             setEnviando(true);
-            const responseSolicitud = await fetch(SOLICITUD_DOCENTE_ENDPOINT, {
+            const solicitudGuardada = await apiClient('/api/v1/solicituddocente', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(datosSolicitud),
             });
-            if (!responseSolicitud.ok) throw new Error(`Error al crear la solicitud: ${await responseSolicitud.text()}`);
             
-            const solicitudGuardada = await responseSolicitud.json();
             const idSolicitudDocente = solicitudGuardada.id || solicitudGuardada.idSolicitudDocente;
 
             const promesasDetalles = pedidoActual.map(item => {
                 const detalle = { idSolicitudDocente, idProducto: item.idProducto, cantidadUnidadMedida: item.cantidadUnidadMedida };
-                return fetch(DETALLE_PEDIDO_ENDPOINT, {
+                return apiClient('/api/v1/detalleproductosolicitud', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(detalle),
                 });
             });
 
-            const responsesDetalles = await Promise.all(promesasDetalles);
-            for (const res of responsesDetalles) {
-                if (!res.ok) throw new Error(`Error al guardar un detalle del pedido: ${await res.text()}`);
-            }
+            await Promise.all(promesasDetalles);
 
             alert('¡Pedido realizado con éxito!');
             setPedidoActual([]);
-            // Recargamos los datos para mostrar el nuevo pedido en el historial
-            cargarDatos();
+            setSelectedRecetaId('');
+            cargarHistorial();
         } catch (err) {
             console.error('Error en el proceso de pedido:', err);
             alert(`No se pudo completar el pedido. Error: ${err.message}`);
@@ -170,7 +166,8 @@ function SolicitudPage() {
             setEnviando(false);
         }
     };
-
+    
+    // --- RENDERIZADO ---
     if (loading) return <div>Cargando...</div>;
 
     return (
@@ -182,7 +179,7 @@ function SolicitudPage() {
             <ThemeButton />
             <BackButton />
 
-            <div className="principal-container" id={styles.solicitudContainer}>
+            <div className={`principal-container ${styles.solicitudContainer}`}>
                 {error && <div className={styles.errorMessage}><strong>Atención:</strong> {error}</div>}
 
                 <div className={styles.datosTotales}>
@@ -192,27 +189,26 @@ function SolicitudPage() {
                                 <option>Daniel Ojeda</option>
                             </select>
                         </label>
-                        <button className="info-block">Agregar Docente</button>
-
                         <div className="fila-doble">
                             <label className="info-label">Asignatura
-                                <select id="asignatura" value={formData.asignatura} onChange={handleFormChange} className="info-block">
+                                <select id="asignaturaId" value={formData.asignaturaId} onChange={handleFormChange} className="info-block" required>
                                     <option value="">Seleccione una asignatura</option>
-                                    {[...new Set(asignaturas.map(a => a.nombre))].map(nombre => (
-                                        <option key={nombre} value={nombre}>{nombre}</option>
+                                    {asignaturas.map(asignatura => (
+                                        <option key={asignatura.idAsignatura} value={asignatura.idAsignatura}>
+                                            {asignatura.nombreAsignatura}
+                                        </option>
                                     ))}
                                 </select>
                             </label>
                             <label className="info-label">Sección
-                                <select id="seccion" value={formData.seccion} onChange={handleFormChange} className="info-block" disabled={!formData.asignatura}>
+                                <select id="seccionId" value={formData.seccionId} onChange={handleFormChange} className="info-block" disabled={!formData.asignaturaId} required>
                                     <option value="">Seleccione una sección</option>
                                     {seccionesDisponibles.map(seccion => (
-                                        <option key={seccion} value={seccion}>{seccion}</option>
+                                        <option key={seccion.idSeccion} value={seccion.idSeccion}>
+                                            {seccion.nombreSeccion}
+                                        </option>
                                     ))}
                                 </select>
-                            </label>
-                            <label className="info-label">Taller
-                                <input id="taller" value={formData.taller} className="info-block" type="text" readOnly />
                             </label>
                         </div>
                         <div className="fila-doble">
@@ -242,23 +238,27 @@ function SolicitudPage() {
 
                 <div className="section-title">Productos Solicitados</div>
                 <div className={styles.pedidoForm}>
-                    <select value={productoSeleccionado} onChange={e => setProductoSeleccionado(e.target.value)} className="info-block" disabled={inventario.length === 0}>
-                        <option value="">
-                            {inventario.length > 0 ? "-- Busca y selecciona un producto --" : "Lista de productos no disponible"}
-                        </option>
-                        {inventario.map(item => (
-                            <option key={item.codigo} value={item.codigo}>
-                                {item.nombre} (Stock: {item.stock})
-                            </option>
-                        ))}
-                    </select>
-                    <input type="number" value={cantidadProducto} onChange={e => setCantidadProducto(e.target.value)} min="1" className="info-block" style={{ width: '80px' }} />
-                    <button onClick={handleAgregarProducto} className="info-block" disabled={inventario.length === 0}>Agregar al Pedido</button>
+                    <label className="info-label">Seleccionar Receta
+                        <select 
+                            value={selectedRecetaId} 
+                            onChange={handleRecetaChange} 
+                            className="info-block"
+                            disabled={recetaLoading}
+                        >
+                            <option value="">-- Selecciona una receta para cargar sus productos --</option>
+                            {recetas.map(receta => (
+                                <option key={receta.idReceta} value={receta.idReceta}>
+                                    {receta.nombreReceta}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
                 </div>
 
                 <h3>Resumen del Pedido</h3>
+                {recetaLoading && <p>Cargando productos de la receta...</p>}
                 <div className={styles.pedidoActual}>
-                    {pedidoActual.length === 0 ? <p>El pedido está vacío.</p> : (
+                    {pedidoActual.length === 0 && !recetaLoading ? <p>El pedido está vacío. Selecciona una receta para empezar.</p> : (
                         <ul>
                             {pedidoActual.map(item => (
                                 <li key={item.idProducto}>
@@ -275,27 +275,31 @@ function SolicitudPage() {
 
                 <div className="section-title">Pedidos Hechos</div>
                 <div className="tabla-container">
-                    <table>
-                        <thead>
-                            <tr><th>Semana</th><th>Asignatura</th><th>Sección</th><th>Fecha</th><th>Estado</th><th>Ítems</th></tr>
-                        </thead>
-                        <tbody>
-                            {pedidosHechos.map((pedido, index) => (
-                                <tr key={pedido.id || index}>
-                                    <td>{pedido.numeroSemana}</td>
-                                    <td>{pedido.nombreAsignatura}</td>
-                                    <td>{pedido.sesion}</td>
-                                    <td>{new Date(pedido.fechaProgramada).toLocaleDateString('es-CL')}</td>
-                                    <td>{pedido.estado}</td>
-                                    <td>
-                                        {pedido.detalles && pedido.detalles.length > 0 ? (
-                                            <ul>{pedido.detalles.map(d => <li key={d.idProducto}>{d.nombreProducto} (x{d.cantidadUnidadMedida})</li>)}</ul>
-                                        ) : ( <span>N/A</span> )}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    {pedidosHechos.length > 0 ? (
+                        <table>
+                            <thead>
+                                <tr><th>Semana</th><th>Asignatura</th><th>Sección</th><th>Fecha</th><th>Estado</th><th>Ítems</th></tr>
+                            </thead>
+                            <tbody>
+                                {pedidosHechos.map((pedido, index) => (
+                                    <tr key={pedido.id || index}>
+                                        <td>{pedido.numeroSemana}</td>
+                                        <td>{pedido.nombreAsignatura}</td>
+                                        <td>{pedido.sesion}</td>
+                                        <td>{new Date(pedido.fechaProgramada).toLocaleDateString('es-CL')}</td>
+                                        <td>{pedido.estado}</td>
+                                        <td>
+                                            {pedido.detalles && pedido.detalles.length > 0 ? (
+                                                <ul>{pedido.detalles.map(d => <li key={d.idProducto}>{d.nombreProducto} (x{d.cantidadUnidadMedida})</li>)}</ul>
+                                            ) : (<span>N/A</span>)}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <p>No hay pedidos en el historial o no se pudieron cargar.</p>
+                    )}
                 </div>
             </div>
         </>
