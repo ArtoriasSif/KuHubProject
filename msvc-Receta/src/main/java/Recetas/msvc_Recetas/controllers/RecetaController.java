@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/receta")
 @Validated
-public class RecetaController {
+public class    RecetaController {
 
     @Autowired
     private RecetaServices recetaServices  ;
@@ -76,6 +76,13 @@ public class RecetaController {
         } catch (Exception e) {
             return ResponseEntity.notFound().build(); // 404 Not Found
         }
+    }
+
+    @GetMapping("/nombre/{nombreReceta}")
+    public ResponseEntity<Receta> findByNombreReceta(@PathVariable String nombreReceta) {
+        return ResponseEntity
+                .status(200)
+                .body(this.recetaServices.findByNombreReceta(nombreReceta));
     }
 
 

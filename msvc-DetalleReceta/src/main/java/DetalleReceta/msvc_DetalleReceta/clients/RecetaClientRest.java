@@ -17,4 +17,7 @@ public interface RecetaClientRest {
     @GetMapping
     ResponseEntity<List<Receta>> findAllRecetas();
 
+    @GetMapping("/nombre/{nombreReceta}")
+    Receta findByNombreReceta(@PathVariable String nombreReceta);
+
 }

@@ -1,175 +1,103 @@
-/* Este archivo contiene solo los estilos ESPECÍFICOS para la tarjeta de contenido,
-  la tabla y el modal de la página de Asignaturas.
-  Hereda los estilos generales de tu archivo main.css.
-*/
-
-.fullWidthOverride {
-  width: 100% !important;
-  max-width: none !important;
-  min-width: unset !important;
-}
+/* Reemplaza todo el contenido de AsignaturasPage.module.css con esto */
 
 /* --- Tarjeta de Contenido Principal --- */
-/* Esta clase se usa en el <div> que envuelve el contenido dentro del .principal-container */
 .contentCard {
-  /* No necesita fondo ni sombra, ya que los hereda del .principal-container */
-  padding: 25px 30px; /* Le damos su propio padding interno */
+  padding: 25px 30px;
 }
 
 /* --- Barra de Acciones y Botón de Agregar --- */
 .actionBar {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
+  gap: 16px;
+  margin-bottom: 25px;
+  align-items: center;
+}
+/* El input del buscador tomará el espacio restante */
+.actionBar input {
+  flex-grow: 1;
 }
 
 .addButton {
   background-color: transparent;
-  color: var(--color-duoc-gold); /* Texto dorado */
-  border: 1px solid var(--color-duoc-gold); /* Borde dorado */
-  padding: 8px 16px;
+  color: var(--color-duoc-gold);
+  border: 1px solid var(--color-duoc-gold);
+  padding: 10px 18px; /* Hacemos el padding consistente con el input */
   border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-weight: 600;
   transition: all 0.2s;
+  white-space: nowrap; /* Evita que el texto se parta */
 }
 
 .addButton:hover {
   background-color: var(--color-duoc-gold);
-  color: var(--color-text-on-light-bg); /* Texto azul sobre fondo dorado */
+  color: var(--color-text-on-light-bg);
 }
 
-/* --- Estilos de la Tabla --- */
-.tableContainer {
-  width: 100%;
-  overflow-x: auto;
-  max-height: 60vh; /* Scroll vertical si la tabla es muy alta */
-  overflow-y: auto;
+/* --- NUEVO: Contenedor Scrolleable del Acordeón --- */
+.accordionContainer {
   border: 1px solid var(--border-color-on-light);
   border-radius: var(--border-radius-sm);
+  max-height: 60vh; /* Altura máxima antes de que aparezca el scroll */
+  overflow-y: auto; /* Scroll vertical automático */
 }
 
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table th,
-.table td {
-  padding: 12px 15px;
-  text-align: left;
+/* --- NUEVO: Estilos para cada item del Acordeón --- */
+.accordionItem {
   border-bottom: 1px solid var(--border-color-on-light);
-  white-space: nowrap;
+}
+.accordionItem:last-child {
+  border-bottom: none;
 }
 
-.table th {
-  background: var(--color-element-bg); /* Fondo gris claro para la cabecera */
-  color: var(--color-text-on-light-bg);
-  font-weight: 600;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  position: sticky; /* Encabezado fijo al hacer scroll vertical */
-  top: 0;
-  z-index: 10;
-}
-
-.table tr:hover {
-  background-color: var(--color-element-bg);
-}
-
-/* --- Celdas y Botones de Acciones en la Tabla --- */
-.actionsHeader {
-  text-align: right !important;
-}
-
-.actionsCell {
+.accordionHeader {
   display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  cursor: pointer;
+  background-color: var(--color-element-bg);
+  color: var(--color-text-on-light-bg);
+  transition: background-color 0.2s;
 }
 
-.editButton,
-.deleteButton {
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    color: var(--color-text-on-dark-bg); /* Texto blanco para ambos */
-    font-weight: 500;
-    transition: opacity 0.2s;
-}
-.editButton:hover, 
-.deleteButton:hover {
-    opacity: 0.85;
+.accordionHeader:hover {
+  background-color: #f0f0f0; /* Un gris un poco más oscuro para el hover */
 }
 
-/* Usamos los colores de Bootstrap que definiste en main.css */
-.editButton { 
-    background-color: var(--bs-secondary); /* Gris secundario para editar */
+/* Cuando el tema es oscuro, el hover es diferente */
+body[data-theme="dark"] .accordionHeader:hover {
+    background-color: #3a3a3a;
 }
-.deleteButton { 
-    background-color: var(--bs-danger); /* Rojo institucional para eliminar */
+
+.accordionIcon {
+  font-size: 0.8em;
+}
+
+.accordionContent {
+  padding: 15px 20px;
+  background-color: var(--color-content-bg); /* Fondo blanco por defecto */
+}
+.accordionContent ul {
+  list-style-type: disc;
+  padding-left: 25px;
+  margin: 0;
+}
+.accordionContent li {
+  padding: 4px 0;
+}
+
+/* --- Mensaje de "No hay resultados" --- */
+.noResults {
+  text-align: center;
+  padding: 30px;
+  color: var(--color-placeholder);
 }
 
 /* --- Estado de Carga (Spinner) --- */
 .loadingContainer {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 40px;
-  gap: 15px;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid var(--border-color-on-light);
-  border-top-color: var(--color-duoc-gold); /* El dorado como color principal del spinner */
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* --- Media Query para Tabla Responsiva en Móviles --- */
-@media (max-width: 768px) {
-  .table thead {
-    display: none;
-  }
-  .table, .table tbody, .table tr, .table td {
-    display: block;
-    width: 100%;
-  }
-  .table tr {
-    border: 1px solid var(--border-color-on-light);
-    border-radius: var(--border-radius-sm);
-    margin-bottom: 15px;
-  }
-  .table td {
-    text-align: right;
-    position: relative;
-    padding-left: 50%;
-    border-bottom: 1px dashed var(--border-color-on-light);
-  }
-  .table tr td:last-child {
-    border-bottom: none;
-  }
-  .table td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 15px;
-    width: calc(50% - 30px);
-    text-align: left;
-    font-weight: 600;
-    color: var(--color-text-on-light-bg);
-  }
-  .actionsCell {
-    justify-content: flex-start;
-    padding-top: 20px;
-  }
 }
