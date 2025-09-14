@@ -4,6 +4,7 @@ package DetalleReceta.msvc_DetalleReceta.services;
 import DetalleReceta.msvc_DetalleReceta.clients.ProductoClientRest;
 import DetalleReceta.msvc_DetalleReceta.clients.RecetaClientRest;
 import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaIUpdateQuantityRequestDTO;
+import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaRequestDTO;
 import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaResponseDTO;
 import DetalleReceta.msvc_DetalleReceta.exceptions.DetalleRecetaException;
 import DetalleReceta.msvc_DetalleReceta.exceptions.DetalleRecetaNotFoundException;
@@ -149,26 +150,30 @@ public class DetalleRecetaServiceImpl implements DetalleRecetaService {
 
     @Transactional
     @Override
-    public DetalleReceta saveDetalleReceta(DetalleReceta detalleReceta) {
+    public DetalleReceta saveDetalleReceta(DetalleRecetaRequestDTO detalleRecetaRequestDTO) {
 
         try {
-            Receta receta= recetaClientRest.findByIdReceta(detalleReceta.getIdReceta());
-        }catch (Exception e){
-            throw new DetalleRecetaException("Receta no encontrada");
-        }
+            Receta receta= recetaClientRest.findByNombreReceta(detalleRecetaRequestDTO.getNombreReceta());
 
-        try{
-            Producto producto = productoClientRest.findProductoById(detalleReceta.getIdProducto()).getBody();
-        }catch (Exception e){
-            throw new ProductoClientException("Producto no encontrado");
-        }
 
-        if (detalleReceta.getCantidadUnidadMedida() <= 0){
+
+            Producto producto = productoClientRest.findProductoById(detalleRecetaRequestDTO.getIdProducto()).getBody();
+
+
+        if (detalleRecetaRequestDTO.getCantidadProducto() <= 0){
             throw new DetalleRecetaException("La cantidad de unidad medida no puede ser menor a 0");
         }
 
+        DetalleReceta detalleReceta = new DetalleReceta();
+        detalleReceta.setIdReceta(receta.getIdReceta());
+        detalleReceta.setIdProducto(producto.getIdProducto());
+        detalleReceta.setCantidadUnidadMedida(detalleRecetaRequestDTO.getCantidadProducto());
 
         return detalleRecetaRepository.save(detalleReceta);
+
+        }catch (Exception e){
+            throw new DetalleRecetaException("Receta no encontrada");
+        }
     }
 
     @Transactional

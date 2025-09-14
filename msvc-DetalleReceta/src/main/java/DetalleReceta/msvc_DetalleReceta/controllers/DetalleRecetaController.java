@@ -1,6 +1,7 @@
 package DetalleReceta.msvc_DetalleReceta.controllers;
 
 import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaIUpdateQuantityRequestDTO;
+import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaRequestDTO;
 import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaResponseDTO;
 import DetalleReceta.msvc_DetalleReceta.exceptions.DetalleRecetaException;
 import DetalleReceta.msvc_DetalleReceta.models.entities.DetalleReceta;
@@ -76,10 +77,10 @@ public class DetalleRecetaController {
     }
 
     @PostMapping
-    public ResponseEntity<DetalleReceta> saveDetalleReceta (@Validated @RequestBody DetalleReceta detalleReceta){
+    public ResponseEntity<DetalleReceta> saveDetalleReceta (@Validated @RequestBody DetalleRecetaRequestDTO detalleRecetaRequestDTO){
         return ResponseEntity
                 .status(201)
-                .body(detalleRecetaService.saveDetalleReceta(detalleReceta));
+                .body(detalleRecetaService.saveDetalleReceta(detalleRecetaRequestDTO));
     }
 
     @PutMapping("/cantidad/{id}")
