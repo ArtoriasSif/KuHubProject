@@ -1,7 +1,6 @@
 package DetalleReceta.msvc_DetalleReceta.services;
 
 import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaIUpdateQuantityRequestDTO;
-import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaRequestDTO;
 import DetalleReceta.msvc_DetalleReceta.dtos.DetalleRecetaResponseDTO;
 import DetalleReceta.msvc_DetalleReceta.models.entities.DetalleReceta;
 
@@ -13,7 +12,7 @@ public interface DetalleRecetaService {
     List<DetalleRecetaResponseDTO> findAllDetalleRecetasConDetalles ();
     List<DetalleRecetaResponseDTO> findAllByIdRecetaConDetalles(Long idReceta);
     DetalleRecetaResponseDTO findByIdRecetasConDetalles(Long idDetalleReceta);
-    DetalleReceta saveDetalleReceta(DetalleRecetaRequestDTO detalleRecetaRequestDTO);
+    DetalleReceta saveDetalleReceta(DetalleReceta detalleReceta);
     DetalleReceta detalleRecetaUpdateQuantity
             (Long id, DetalleRecetaIUpdateQuantityRequestDTO quantityRequest);
     void deletarTodoByIdReceta (Long idReceta);
