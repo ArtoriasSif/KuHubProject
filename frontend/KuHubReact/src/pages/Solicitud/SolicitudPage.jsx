@@ -102,7 +102,7 @@ function SolicitudPage() {
             const productosParaPedido = detallesDeReceta.map(detalle => ({
                 idProducto: detalle.idProducto,
                 nombreProducto: detalle.nombreProducto,
-                cantidadUnidadMedida: detalle.cantidad
+                cantidadDetalleReceta: detalle.cantidad
             }));
             setPedidoActual(productosParaPedido);
         } catch (err) {
@@ -130,7 +130,7 @@ function SolicitudPage() {
             numeroSemana: formData.numeroSemana,
             cantidadPersonas: formData.cantidadPersonas,
             descripcionSemana: formData.descripcionSemana.trim(),
-            sesion: seccionSeleccionada?.nombreSeccion || '',
+            seccion: seccionSeleccionada?.nombreSeccion || '',
             nombreAsignatura: asignaturaSeleccionada?.nombreAsignatura || '',
             fechaProgramada: formData.fecha,
             estado: "Pendiente"
@@ -146,7 +146,7 @@ function SolicitudPage() {
             const idSolicitudDocente = solicitudGuardada.id || solicitudGuardada.idSolicitudDocente;
 
             const promesasDetalles = pedidoActual.map(item => {
-                const detalle = { idSolicitudDocente, idProducto: item.idProducto, cantidadUnidadMedida: item.cantidadUnidadMedida };
+                const detalle = { idSolicitudDocente, idProducto: item.idProducto, cantidadDetalleReceta: item.cantidadDetalleReceta };
                 return apiClient('/api/v1/detalleproductosolicitud', {
                     method: 'POST',
                     body: JSON.stringify(detalle),
@@ -262,7 +262,7 @@ function SolicitudPage() {
                         <ul>
                             {pedidoActual.map(item => (
                                 <li key={item.idProducto}>
-                                    {item.nombreProducto} - Cantidad: {item.cantidadUnidadMedida}
+                                    {item.nombreProducto} - Cantidad: {item.cantidadDetalleReceta}
                                     <button onClick={() => handleQuitarProducto(item.idProducto)} className={styles.btnQuitar}>Quitar</button>
                                 </li>
                             ))}
@@ -285,12 +285,12 @@ function SolicitudPage() {
                                     <tr key={pedido.id || index}>
                                         <td>{pedido.numeroSemana}</td>
                                         <td>{pedido.nombreAsignatura}</td>
-                                        <td>{pedido.sesion}</td>
+                                        <td>{pedido.seccion}</td>
                                         <td>{new Date(pedido.fechaProgramada).toLocaleDateString('es-CL')}</td>
                                         <td>{pedido.estado}</td>
                                         <td>
                                             {pedido.detalles && pedido.detalles.length > 0 ? (
-                                                <ul>{pedido.detalles.map(d => <li key={d.idProducto}>{d.nombreProducto} (x{d.cantidadUnidadMedida})</li>)}</ul>
+                                                <ul>{pedido.detalles.map(d => <li key={d.idProducto}>{d.nombreProducto} (x{d.cantidadDetalleReceta})</li>)}</ul>
                                             ) : (<span>N/A</span>)}
                                         </td>
                                     </tr>
