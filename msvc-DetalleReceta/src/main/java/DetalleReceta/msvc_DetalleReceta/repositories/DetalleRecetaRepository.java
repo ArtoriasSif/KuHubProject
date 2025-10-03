@@ -12,5 +12,4 @@ public interface DetalleRecetaRepository extends JpaRepository<DetalleReceta, Lo
     void deleteByIdReceta(Long idReceta);
     List<DetalleReceta> findAllByIdReceta(Long idReceta);
     boolean existsByIdProducto(Long idProducto);
-    List<DetalleReceta> saveAll(List<DetalleReceta> detalleRecetas);
 }
